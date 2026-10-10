@@ -1,13 +1,20 @@
 // GET /api/health — deployment check.
-// Public:  /api/health                 → { ready: true|false } only
-// Private: /api/health?token=<HEALTH_TOKEN> → which settings are present and whether
-//          the database table is reachable. Never returns key values.
-import { timingSafeEqual } from 'node:crypto';
+// Public:  /api/health → { ready: true|false } only
+// Private: send header  x-health-token: <HEALTH_TOKEN>  → which settings are present and
+//          whether the database table is reachable. Never returns key values.
+// The token is read from a header (not the URL) so it does not end up in request logs.
+import { createHash, timingSafeEqual } from 'node:crypto';
+
+const digest = s => createHash('sha256').update(String(s), 'utf8').digest(); // always 32 bytes
 
 function tokenOk(given) {
   const want = process.env.HEALTH_TOKEN;
-  if (!want || typeof given !== 'string' || given.length !== want.length) return false;
-  return timingSafeEqual(Buffer.from(given), Buffer.from(want));
+  if (!want || typeof given !== 'string' || !given) return false;
+  try {
+    return timingSafeEqual(digest(given), digest(want));
+  } catch {
+    return false;
+  }
 }
 
 export default async function handler(req, res) {
@@ -31,8 +38,8 @@ export default async function handler(req, res) {
   const ready = Boolean(url && key && process.env.IP_HASH_SALT && database.startsWith('ok'));
   res.setHeader('Cache-Control', 'no-store');
 
-  const q = new URL(req.url || '/', 'http://x').searchParams;
-  if (!tokenOk(q.get('token'))) return res.status(200).json({ ready });
+  const given = req.headers && (req.headers['x-health-token'] || req.headers['X-Health-Token']);
+  if (!tokenOk(Array.isArray(given) ? given[0] : given)) return res.status(200).json({ ready });
 
   return res.status(200).json({
     ready,

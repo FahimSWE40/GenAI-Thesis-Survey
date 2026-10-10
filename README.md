@@ -165,10 +165,18 @@ Supabase will show an "RLS enabled, no policy" notice for `responses` and `withd
    | `SUPABASE_SERVICE_ROLE_KEY` | Supabase **secret** key |
    | `IP_HASH_SALT` | Long random text (40+ characters). Keep it secret and **never change it during data collection** |
    | `TURNSTILE_SECRET_KEY` | *Optional* — Cloudflare Turnstile secret key |
-   | `HEALTH_TOKEN` | *Optional* — private text that unlocks the detailed `/api/health` view |
+   | `HEALTH_TOKEN` | *Optional* — private text that unlocks the detailed `/api/health` view (sent as the `x-health-token` header) |
 
 4. **Deploy.** Every push to `main` redeploys automatically.
-5. **Check the deployment:** open `https://<your-site>.vercel.app/api/health`. Publicly it only shows `{"ready": true|false}`. For details, set a private `HEALTH_TOKEN` in Vercel and open `/api/health?token=<your token>`: it lists which settings are present (never their values) and whether the `responses` table is reachable. After changing environment variables, redeploy so they take effect.
+5. **Check the deployment:** open `https://<your-site>.vercel.app/api/health` — publicly it only shows `{"ready": true|false}`. For details, set a private `HEALTH_TOKEN` in Vercel and send it as a header (not in the URL, so it never appears in request logs):
+
+   ```bash
+   curl -H "x-health-token: <your token>" https://<your-site>.vercel.app/api/health
+   ```
+   ```powershell
+   Invoke-RestMethod https://<your-site>.vercel.app/api/health -Headers @{ "x-health-token" = "<your token>" }
+   ```
+   The detailed view lists which settings are present (never their values) and whether the `responses` table is reachable. After changing environment variables, redeploy so they take effect.
 
 **If Submit fails,** participants see a neutral message with a short code (details are kept out of public view):
 
