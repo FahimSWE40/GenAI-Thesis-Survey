@@ -116,7 +116,8 @@ insert into withdrawals (receipt_code, note) values ('GA-5YF4-PZMA', 'participan
 |---|---|
 | `public/questions.js` | **Single source of truth** — every question, option, code, scale and help note (EN + BN), plus `STUDY_INFO` settings |
 | `public/index.html`, `public/app.js`, `public/styles.css` | The form participants see |
-| `api/submit.js` | Serverless function: validation, IP hashing, device type, bot check, receipt code, insert |
+| `api/submit.js` | Serverless function: validation, IP hashing, device type, bot check, receipt code, insert, clear error messages |
+| `api/health.js` | Deployment status page (`/api/health`): settings present + database reachable |
 | `supabase/schema.sql` | Tables, append-only trigger, withdrawals table and analysis view — *generated* |
 | `CODEBOOK.md` | Every column and value code — *generated* |
 | `scripts/generate.mjs` | Regenerates `schema.sql` and `CODEBOOK.md` from `questions.js` |
@@ -166,6 +167,9 @@ Supabase will show an "RLS enabled, no policy" notice for `responses` and `withd
    | `TURNSTILE_SECRET_KEY` | *Optional* — Cloudflare Turnstile secret key |
 
 4. **Deploy.** Every push to `main` redeploys automatically.
+5. **Check the deployment:** open `https://<your-site>.vercel.app/api/health`. It lists which settings are present (never their values) and whether the `responses` table is reachable. It should show `"database": "ok — responses table reachable"` and `"ready": true`. After changing environment variables, redeploy so they take effect.
+
+**If Submit fails:** the form shows the server's reason, e.g. *"Database is not set up yet (survey table not found)"* → run `supabase/schema.sql` in the right project; *"Server cannot access the database"* → use the **secret** key, not the publishable key. "Check your internet connection" appears only when the server cannot be reached at all.
 
 **Bot check (optional, recommended):** Cloudflare dashboard → **Turnstile → Add widget** (your Vercel domain, mode *Managed*). Put the **site key** in `public/questions.js` → `STUDY_INFO.turnstileSiteKey` and push; put the **secret key** in Vercel as `TURNSTILE_SECRET_KEY`.
 
