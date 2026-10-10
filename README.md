@@ -165,11 +165,22 @@ Supabase will show an "RLS enabled, no policy" notice for `responses` and `withd
    | `SUPABASE_SERVICE_ROLE_KEY` | Supabase **secret** key |
    | `IP_HASH_SALT` | Long random text (40+ characters). Keep it secret and **never change it during data collection** |
    | `TURNSTILE_SECRET_KEY` | *Optional* — Cloudflare Turnstile secret key |
+   | `HEALTH_TOKEN` | *Optional* — private text that unlocks the detailed `/api/health` view |
 
 4. **Deploy.** Every push to `main` redeploys automatically.
-5. **Check the deployment:** open `https://<your-site>.vercel.app/api/health`. It lists which settings are present (never their values) and whether the `responses` table is reachable. It should show `"database": "ok — responses table reachable"` and `"ready": true`. After changing environment variables, redeploy so they take effect.
+5. **Check the deployment:** open `https://<your-site>.vercel.app/api/health`. Publicly it only shows `{"ready": true|false}`. For details, set a private `HEALTH_TOKEN` in Vercel and open `/api/health?token=<your token>`: it lists which settings are present (never their values) and whether the `responses` table is reachable. After changing environment variables, redeploy so they take effect.
 
-**If Submit fails:** the form shows the server's reason, e.g. *"Database is not set up yet (survey table not found)"* → run `supabase/schema.sql` in the right project; *"Server cannot access the database"* → use the **secret** key, not the publishable key. "Check your internet connection" appears only when the server cannot be reached at all.
+**If Submit fails,** participants see a neutral message with a short code (details are kept out of public view):
+
+| Code | Meaning | Fix |
+|---|---|---|
+| S1 | Database settings missing on the server | Add `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` in Vercel, then redeploy |
+| S2 | Survey table not found | Run `supabase/schema.sql` in the SQL Editor of the right project |
+| S3 | Server cannot access the database | Use the **secret** key (`sb_secret_…`), not the publishable key |
+| S4 | An answer broke a database rule | Usually an outdated page — reload; if it persists, check `schema.sql` matches `questions.js` |
+| S5 | Other save error | Check the Vercel function log (it records only the code and status, never answers) |
+
+"Check your internet connection" appears only when the server cannot be reached at all.
 
 **Bot check (optional, recommended):** Cloudflare dashboard → **Turnstile → Add widget** (your Vercel domain, mode *Managed*). Put the **site key** in `public/questions.js` → `STUDY_INFO.turnstileSiteKey` and push; put the **secret key** in Vercel as `TURNSTILE_SECRET_KEY`.
 

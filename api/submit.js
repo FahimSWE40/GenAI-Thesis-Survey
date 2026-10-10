@@ -146,11 +146,20 @@ export async function insertRow(row) {
 export function publicError(e) {
   const msg = String(e && e.message || '');
   const detail = String(e && e.detail || '');
-  if (msg.includes('missing SUPABASE_URL')) return { status: 503, error: 'Survey server is not configured yet (database settings missing).', code: 'not_configured' };
-  if (detail.includes('PGRST205') || e?.status === 404) return { status: 503, error: 'Database is not set up yet (survey table not found).', code: 'no_table' };
-  if (e?.status === 401 || e?.status === 403) return { status: 503, error: 'Server cannot access the database (wrong or missing secret key).', code: 'bad_key' };
-  if (detail.includes('23514') || detail.includes('23502')) return { status: 400, error: 'An answer did not match the database rules. Please reload the page and try again.', code: 'constraint' };
-  return { status: 500, error: 'Could not save your response. Please try again.', code: 'save_failed' };
+  // Participants see a neutral message plus a short code; the code's meaning is in the README
+  // (and /api/health?token=… shows the details), so setup state is not spelled out publicly.
+  const unavailable = code => ({ status: 503, error: `The survey is temporarily unavailable. Please try again later. (code: ${code})`, code });
+  if (msg.includes('missing SUPABASE_URL')) return unavailable('S1');
+  if (detail.includes('PGRST205') || e?.status === 404) return unavailable('S2');
+  if (e?.status === 401 || e?.status === 403) return unavailable('S3');
+  if (detail.includes('23514') || detail.includes('23502')) return { status: 400, error: 'An answer could not be saved. Please reload the page and try again. (code: S4)', code: 'S4' };
+  return { status: 500, error: 'Could not save your response. Please try again. (code: S5)', code: 'S5' };
+}
+
+// Log only what is needed to diagnose — never the database's error detail, which can echo answers.
+export function logSaveError(e) {
+  const pe = publicError(e);
+  console.error(`save failed: code=${pe.code} status=${e?.status ?? 'n/a'}`);
 }
 
 export default async function handler(req, res) {
@@ -180,7 +189,7 @@ export default async function handler(req, res) {
     await insertRow(row);
     return res.status(200).json({ ok: true, receipt: row.receipt_code });
   } catch (e) {
-    console.error(e);
+    logSaveError(e);
     const pe = publicError(e);
     return res.status(pe.status).json({ error: pe.error, code: pe.code });
   }

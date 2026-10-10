@@ -19,7 +19,7 @@ if (existsSync(envFile)) {
     if (m && !process.env[m[1]]) process.env[m[1]] = m[2].replace(/^["']|["']$/g, '');
   }
 }
-const { validate, insertRow, requestMeta, verifyBot, publicError } = await import('../api/submit.js');
+const { validate, insertRow, requestMeta, verifyBot, publicError, logSaveError } = await import('../api/submit.js');
 const useSupabase = Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml' };
@@ -55,7 +55,7 @@ createServer(async (req, res) => {
       console.log(`✓ saved ${row.receipt_code} → ${useSupabase ? 'Supabase' : 'dev-responses.jsonl'}`);
       return send(200, { ok: true, receipt: row.receipt_code });
     } catch (e) {
-      console.error(e);
+      logSaveError(e);
       const pe = publicError(e);
       return send(pe.status, { error: pe.error, code: pe.code });
     }
