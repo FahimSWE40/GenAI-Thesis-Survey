@@ -25,6 +25,13 @@ Only participants who answer **Yes** to all three are allowed to continue; nothi
 | form_version | Questionnaire version |
 | ui_lang | Language view used: en / bn / both |
 | attention_pass | true if ATT = 4 (Agree) and ATT2 = 2 (Disagree) |
+| respondent_id | Random ID stored in the participant's browser — the same device/browser always sends the same ID (detects repeat submissions) |
+| ip_hash | One-way salted SHA-256 code of the internet connection; the IP address is never stored and cannot be recovered |
+| device_type | mobile / tablet / desktop / unknown (from the browser's user agent) |
+| src | Recruitment source tag from the link, e.g. `?src=diu-cse-whatsapp` |
+| receipt_code | Code shown to the participant after submitting; used to request withdrawal |
+| bot_check | `passed` = Cloudflare Turnstile verified a human; `not_configured` = check was off |
+| withdrawn | (view only) true if the participant withdrew using their receipt code — exclude these rows |
 
 ## Section B: About You
 

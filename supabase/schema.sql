@@ -11,6 +11,13 @@ create table if not exists public.responses (
   form_version   text not null,
   ui_lang        text,
   attention_pass boolean,
+  -- data-authenticity fields (no personal data)
+  respondent_id  uuid,                 -- random ID kept in the participant's browser (same device = same ID)
+  ip_hash        text,                 -- one-way salted SHA-256 of the IP address; the IP itself is never stored
+  device_type    text check (device_type in ('mobile', 'tablet', 'desktop', 'unknown')),
+  src            text check (src ~ '^[a-z0-9_-]{1,60}$'),   -- recruitment source tag from the shared link
+  receipt_code   text not null unique, -- shown to the participant; used for withdrawal requests
+  bot_check      text check (bot_check in ('passed', 'not_configured')),
   dem1 smallint not null check (dem1 between 1 and 4),
   dem2 smallint not null check (dem2 between 1 and 2),
   dem3 text not null check (char_length(dem3) between 2 and 150),
@@ -86,6 +93,31 @@ create table if not exists public.responses (
 -- RLS on + no policies = the public anon key has no access at all.
 alter table public.responses enable row level security;
 revoke all on public.responses from anon, authenticated;
+
+-- Append-only: once saved, a response can never be edited or deleted (not even by the researcher).
+-- Removing this protection would require a new migration, which Supabase records in its history.
+create or replace function public.responses_block_changes()
+returns trigger language plpgsql set search_path = '' as $$
+begin
+  raise exception 'responses are append-only: % is not allowed', tg_op;
+end;
+$$;
+drop trigger if exists responses_no_update_delete on public.responses;
+create trigger responses_no_update_delete before update or delete on public.responses
+  for each row execute function public.responses_block_changes();
+drop trigger if exists responses_no_truncate on public.responses;
+create trigger responses_no_truncate before truncate on public.responses
+  for each statement execute function public.responses_block_changes();
+
+-- Withdrawals are recorded here instead of deleting data; exclude them in analysis (view column "withdrawn").
+create table if not exists public.withdrawals (
+  id            bigint generated always as identity primary key,
+  receipt_code  text not null unique,
+  requested_at  timestamptz not null default now(),
+  note          text
+);
+alter table public.withdrawals enable row level security;
+revoke all on public.withdrawals from anon, authenticated;
 
 comment on column public.responses.dem1 is 'DEM1: Your age | 1=18–20 years; 2=21–23 years; 3=24–26 years; 4=27 years or above';
 comment on column public.responses.dem2 is 'DEM2: Your gender | 1=Male; 2=Female';
@@ -166,6 +198,13 @@ select
   form_version,
   ui_lang,
   attention_pass,
+  respondent_id,
+  ip_hash,
+  device_type,
+  src,
+  receipt_code,
+  bot_check,
+  exists (select 1 from public.withdrawals w where w.receipt_code = responses.receipt_code) as withdrawn,
   dem1,
   dem2,
   dem3,

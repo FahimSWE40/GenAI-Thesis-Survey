@@ -34,11 +34,14 @@ export const TEXT_PLACEHOLDER = { en: 'Type here', bn: 'এখানে লি�
 export const STUDY_INFO = {
   contactEmail: '',   // researcher contact, e.g. 'your.name@diu.edu.bd'
   ethicsRef: '',      // ethics approval reference from the department / university committee
+  // Cloudflare Turnstile SITE key (public). Leave empty to switch the bot check off.
+  // The matching SECRET key goes only in Vercel as TURNSTILE_SECRET_KEY.
+  turnstileSiteKey: '',
 };
 
 export const CONSENT_TEXT = {
-  en: 'This survey is part of a university research study. It asks how students use GenAI tools like ChatGPT, Gemini and Copilot, and how this relates to their thinking, relationships and confidence. It takes about 12–15 minutes. Taking part is your choice, and you can stop at any time. We do not ask for your name, student ID or email, and results are only reported for the whole group. There are no right or wrong answers — please answer honestly.',
-  bn: 'এই জরিপটি একটি বিশ্ববিদ্যালয় গবেষণার অংশ। এখানে জানতে চাওয়া হচ্ছে, শিক্ষার্থীরা ChatGPT, Gemini, Copilot-এর মতো GenAI টুল কীভাবে ব্যবহার করেন এবং এর সঙ্গে তাঁদের চিন্তা, সম্পর্ক ও আত্মবিশ্বাসের কী সম্পর্ক। এতে প্রায় ১২–১৫ মিনিট লাগবে। অংশ নেওয়া আপনার ইচ্ছা, এবং যেকোনো সময় থেমে যেতে পারেন। আপনার নাম, স্টুডেন্ট আইডি বা ইমেইল চাওয়া হবে না, আর ফলাফল শুধু পুরো দলের জন্য প্রকাশ করা হবে। এখানে কোনো সঠিক বা ভুল উত্তর নেই — অনুগ্রহ করে সৎভাবে উত্তর দিন।',
+  en: 'This survey is part of a university research study. It asks how students use GenAI tools like ChatGPT, Gemini and Copilot, and how this relates to their thinking, relationships and confidence. It takes about 12–15 minutes. Taking part is your choice, and you can stop at any time. We do not ask for your name, student ID or email, and results are only reported for the whole group. To check that responses are genuine, we record your device type and a scrambled code of your internet connection (your IP address is not stored). After submitting, you will get a response code that you can use to withdraw your answers. There are no right or wrong answers — please answer honestly.',
+  bn: 'এই জরিপটি একটি বিশ্ববিদ্যালয় গবেষণার অংশ। এখানে জানতে চাওয়া হচ্ছে, শিক্ষার্থীরা ChatGPT, Gemini, Copilot-এর মতো GenAI টুল কীভাবে ব্যবহার করেন এবং এর সঙ্গে তাঁদের চিন্তা, সম্পর্ক ও আত্মবিশ্বাসের কী সম্পর্ক। এতে প্রায় ১২–১৫ মিনিট লাগবে। অংশ নেওয়া আপনার ইচ্ছা, এবং যেকোনো সময় থেমে যেতে পারেন। আপনার নাম, স্টুডেন্ট আইডি বা ইমেইল চাওয়া হবে না, আর ফলাফল শুধু পুরো দলের জন্য প্রকাশ করা হবে। উত্তরগুলো আসল কি না যাচাই করতে আমরা আপনার ডিভাইসের ধরন এবং ইন্টারনেট সংযোগের একটি এনক্রিপ্ট করা কোড সংরক্ষণ করি (আপনার আইপি ঠিকানা সংরক্ষণ করা হয় না)। জমা দেওয়ার পর আপনি একটি কোড পাবেন, যা দিয়ে পরে উত্তর প্রত্যাহার করতে পারবেন। এখানে কোনো সঠিক বা ভুল উত্তর নেই — অনুগ্রহ করে সৎভাবে উত্তর দিন।',
 };
 
 // Screening questions. Any answer other than v=1 ends the survey; nothing is saved.

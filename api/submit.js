@@ -2,11 +2,57 @@
 // Validates a completed survey against public/questions.js and inserts one row
 // into the Supabase `responses` table using the service-role key (server-side only).
 
+import { createHash, createHmac } from 'node:crypto';
 import { SCREENING, FORM_VERSION, fieldList, ATTENTION_ITEMS } from '../public/questions.js';
 
 const FIELDS = fieldList();
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const MAX_OTHER = 200;
+const CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTVWXYZ23456789'; // no 0/O, 1/I/L, U
+
+// Receipt code shown to the participant, e.g. "GA-7K2P-QX9M". Derived from the
+// random submission_id, so a retried submission always gets the same code.
+export function receiptCode(submissionId) {
+  const h = createHash('sha256').update('receipt:' + submissionId).digest();
+  let out = '';
+  for (let i = 0; i < 8; i++) out += CODE_ALPHABET[h[i] % CODE_ALPHABET.length];
+  return `GA-${out.slice(0, 4)}-${out.slice(4)}`;
+}
+
+// Authenticity data taken from the request itself (never from the browser's word).
+// The IP address is only used to make a one-way salted hash; it is not stored.
+export function requestMeta(req) {
+  const hdr = name => (req.headers && (req.headers[name] || req.headers[name.toLowerCase()])) || '';
+  const ip = String(hdr('x-forwarded-for')).split(',')[0].trim() || String(hdr('x-real-ip')) || req.socket?.remoteAddress || '';
+  const salt = process.env.IP_HASH_SALT;
+  const ua = String(hdr('user-agent'));
+  const device_type = !ua ? 'unknown'
+    : /iPad|Tablet|PlayBook|Silk|(Android(?!.*Mobile))/i.test(ua) ? 'tablet'
+    : /Mobi|iPhone|iPod|Android|Opera Mini|IEMobile/i.test(ua) ? 'mobile' : 'desktop';
+  return {
+    ip,
+    device_type,
+    ip_hash: salt && ip ? createHmac('sha256', salt).update(ip).digest('hex').slice(0, 32) : null,
+  };
+}
+
+// Cloudflare Turnstile bot check. Returns 'passed', 'failed' or 'not_configured'.
+export async function verifyBot(token, ip) {
+  const secret = process.env.TURNSTILE_SECRET_KEY;
+  if (!secret) return 'not_configured';
+  if (!token || typeof token !== 'string') return 'failed';
+  try {
+    const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ secret, response: token, ...(ip ? { remoteip: ip } : {}) }),
+    });
+    const data = await r.json();
+    return data.success ? 'passed' : 'failed';
+  } catch {
+    return 'failed';
+  }
+}
 
 // Returns { ok: true, row } or { ok: false, error }
 export function validate(body) {
@@ -25,6 +71,9 @@ export function validate(body) {
     submission_id: body.submission_id,
     form_version: FORM_VERSION,
     ui_lang: ['en', 'bn', 'both'].includes(body.ui_lang) ? body.ui_lang : 'both',
+    respondent_id: UUID_RE.test(String(body.respondent_id || '')) ? body.respondent_id : null,
+    src: String(body.src || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 60) || null,
+    receipt_code: receiptCode(body.submission_id),
   };
 
   const started = Date.parse(body.started_at);
@@ -108,9 +157,14 @@ export default async function handler(req, res) {
   const v = validate(body);
   if (!v.ok) return res.status(400).json({ error: v.error });
 
+  const meta = requestMeta(req);
+  const bot = await verifyBot(body.bot_token, meta.ip);
+  if (bot === 'failed') return res.status(403).json({ error: 'Bot check failed. Please reload the page and try again.' });
+  const row = { ...v.row, ip_hash: meta.ip_hash, device_type: meta.device_type, bot_check: bot };
+
   try {
-    await insertRow(v.row);
-    return res.status(200).json({ ok: true });
+    await insertRow(row);
+    return res.status(200).json({ ok: true, receipt: row.receipt_code });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: 'Could not save your response. Please try again.' });

@@ -12,8 +12,19 @@ const ALL_IDS = [...SCREEN_IDS, ...SECTIONS.flatMap(s => (s.kind === 'likert' ? 
 let state = load() || fresh();
 let submitting = false;
 
+// Persistent anonymous device ID (kept across form versions and after submitting),
+// so repeat submissions from the same browser can be detected.
+const RESPONDENT_KEY = 'genai-survey-respondent';
+const respondentId = (() => {
+  try {
+    let id = localStorage.getItem(RESPONDENT_KEY);
+    if (!id) { id = crypto.randomUUID(); localStorage.setItem(RESPONDENT_KEY, id); }
+    return id;
+  } catch { return null; }
+})();
+
 function fresh() {
-  return { answers: {}, startedAt: new Date().toISOString(), submissionId: crypto.randomUUID(), lang: 'both', status: 'active' };
+  return { answers: {}, startedAt: new Date().toISOString(), submissionId: crypto.randomUUID(), lang: 'both', status: 'active', src: null, receipt: null };
 }
 function load() {
   try { const s = JSON.parse(localStorage.getItem(STORE_KEY)); return s && s.answers ? s : null; } catch { return null; }
@@ -115,7 +126,13 @@ function render() {
     </header>`;
 
   if (state.status === 'done') {
-    app.innerHTML = masthead + `<div class="done"><strong>${ti({ en: 'Thank you', bn: 'ধন্যবাদ' })}</strong>${t({ en: 'Your response has been recorded.', bn: 'আপনার উত্তর সংরক্ষিত হয়েছে।' })}</div>`;
+    const receipt = state.receipt ? `<div class="receipt">
+        <div class="receipt-label">${ti({ en: 'Your response code', bn: 'আপনার উত্তরের কোড' })}</div>
+        <div class="receipt-code">${esc(state.receipt)}</div>
+        <p>${t({ en: 'Please keep this code (take a screenshot). If you later want to withdraw your answers, send this code to the researcher.',
+                 bn: 'অনুগ্রহ করে কোডটি রেখে দিন (স্ক্রিনশট নিন)। পরে উত্তর প্রত্যাহার করতে চাইলে এই কোডটি গবেষকের কাছে পাঠান।' })}</p>
+      </div>` : '';
+    app.innerHTML = masthead + `<div class="done"><strong>${ti({ en: 'Thank you', bn: 'ধন্যবাদ' })}</strong>${t({ en: 'Your response has been recorded.', bn: 'আপনার উত্তর সংরক্ষিত হয়েছে।' })}${receipt}</div>`;
     bar.style.width = '100%';
     return;
   }
@@ -138,12 +155,14 @@ function render() {
     <div id="rest">${rest}
       <div class="actions">
         <div id="err" class="error" role="alert"></div>
+        <div id="botcheck"></div>
         <button class="submit" type="button" id="submit">${t({ en: 'Submit', bn: 'জমা দিন' })}</button>
       </div>
     </div>
     <input class="honeypot" type="text" name="website" id="website" tabindex="-1" autocomplete="off" aria-hidden="true">`;
 
   document.getElementById('submit').onclick = submit;
+  mountBotCheck();
   update();
 }
 
@@ -209,6 +228,10 @@ async function submit() {
     document.getElementById('q-' + missing[0])?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
   }
+  if (STUDY_INFO.turnstileSiteKey && !botToken) {
+    err.innerHTML = ti({ en: 'Please wait for the security check below to finish, then submit again.', bn: 'নিচের নিরাপত্তা যাচাই শেষ হওয়া পর্যন্ত অপেক্ষা করুন, তারপর আবার জমা দিন।' });
+    return;
+  }
   submitting = true;
   err.textContent = '';
   const btn = document.getElementById('submit');
@@ -222,10 +245,15 @@ async function submit() {
         started_at: state.startedAt,
         ui_lang: state.lang,
         website: document.getElementById('website')?.value || '',
+        respondent_id: respondentId,
+        src: state.src,
+        bot_token: botToken,
         answers: state.answers,
       }),
     });
-    if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || res.statusText);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || res.statusText);
+    state.receipt = data.receipt || null;
     state.status = 'done';
     state.answers = {};
     save();
@@ -238,6 +266,31 @@ async function submit() {
   } finally {
     submitting = false;
   }
+}
+
+// ---------- recruitment source (?src=...) ----------
+try {
+  const src = new URLSearchParams(location.search).get('src');
+  if (src) { state.src = src.toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 60) || null; save(); }
+} catch { /* ignore */ }
+
+// ---------- Cloudflare Turnstile bot check (only when a site key is set) ----------
+let botToken = null;
+function mountBotCheck() {
+  const el = document.getElementById('botcheck');
+  if (!el || !STUDY_INFO.turnstileSiteKey) return;
+  const draw = () => window.turnstile.render(el, {
+    sitekey: STUDY_INFO.turnstileSiteKey,
+    callback: tok => { botToken = tok; },
+    'expired-callback': () => { botToken = null; },
+    'error-callback': () => { botToken = null; },
+  });
+  if (window.turnstile) return draw();
+  const sc = document.createElement('script');
+  sc.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+  sc.async = true;
+  sc.onload = draw;
+  document.head.appendChild(sc);
 }
 
 render();

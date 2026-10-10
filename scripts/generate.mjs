@@ -33,7 +33,9 @@ for (const f of FIELDS) {
 }
 
 const likertSections = SECTIONS.filter(s => s.kind === 'likert');
-const viewCols = ['id', 'created_at', 'started_at', 'duration_sec', 'form_version', 'ui_lang', 'attention_pass'];
+const viewCols = ['id', 'created_at', 'started_at', 'duration_sec', 'form_version', 'ui_lang', 'attention_pass',
+  'respondent_id', 'ip_hash', 'device_type', 'src', 'receipt_code', 'bot_check',
+  'exists (select 1 from public.withdrawals w where w.receipt_code = responses.receipt_code) as withdrawn'];
 for (const f of FIELDS) {
   if (f.kind === 'multi') {
     for (const o of f.q.options) viewCols.push(`(case when ${sqlStr(o.v)} = any(${f.col}) then 1 else 0 end) as ${f.col}_${o.other ? "other_selected" : o.v}`);
@@ -61,6 +63,13 @@ create table if not exists public.responses (
   form_version   text not null,
   ui_lang        text,
   attention_pass boolean,
+  -- data-authenticity fields (no personal data)
+  respondent_id  uuid,                 -- random ID kept in the participant's browser (same device = same ID)
+  ip_hash        text,                 -- one-way salted SHA-256 of the IP address; the IP itself is never stored
+  device_type    text check (device_type in ('mobile', 'tablet', 'desktop', 'unknown')),
+  src            text check (src ~ '^[a-z0-9_-]{1,60}$'),   -- recruitment source tag from the shared link
+  receipt_code   text not null unique, -- shown to the participant; used for withdrawal requests
+  bot_check      text check (bot_check in ('passed', 'not_configured')),
 ${cols.join(',\n')}
 );
 
@@ -68,6 +77,31 @@ ${cols.join(',\n')}
 -- RLS on + no policies = the public anon key has no access at all.
 alter table public.responses enable row level security;
 revoke all on public.responses from anon, authenticated;
+
+-- Append-only: once saved, a response can never be edited or deleted (not even by the researcher).
+-- Removing this protection would require a new migration, which Supabase records in its history.
+create or replace function public.responses_block_changes()
+returns trigger language plpgsql set search_path = '' as $$
+begin
+  raise exception 'responses are append-only: % is not allowed', tg_op;
+end;
+$$;
+drop trigger if exists responses_no_update_delete on public.responses;
+create trigger responses_no_update_delete before update or delete on public.responses
+  for each row execute function public.responses_block_changes();
+drop trigger if exists responses_no_truncate on public.responses;
+create trigger responses_no_truncate before truncate on public.responses
+  for each statement execute function public.responses_block_changes();
+
+-- Withdrawals are recorded here instead of deleting data; exclude them in analysis (view column "withdrawn").
+create table if not exists public.withdrawals (
+  id            bigint generated always as identity primary key,
+  receipt_code  text not null unique,
+  requested_at  timestamptz not null default now(),
+  note          text
+);
+alter table public.withdrawals enable row level security;
+revoke all on public.withdrawals from anon, authenticated;
 
 ${comments.join('\n')}
 
@@ -109,6 +143,13 @@ ${SCREENING.map(q => `| ${q.id} | ${q.en} |`).join('\n')}
 | form_version | Questionnaire version |
 | ui_lang | Language view used: en / bn / both |
 | attention_pass | true if ATT = 4 (Agree) and ATT2 = 2 (Disagree) |
+| respondent_id | Random ID stored in the participant's browser — the same device/browser always sends the same ID (detects repeat submissions) |
+| ip_hash | One-way salted SHA-256 code of the internet connection; the IP address is never stored and cannot be recovered |
+| device_type | mobile / tablet / desktop / unknown (from the browser's user agent) |
+| src | Recruitment source tag from the link, e.g. \`?src=diu-cse-whatsapp\` |
+| receipt_code | Code shown to the participant after submitting; used to request withdrawal |
+| bot_check | \`passed\` = Cloudflare Turnstile verified a human; \`not_configured\` = check was off |
+| withdrawn | (view only) true if the participant withdrew using their receipt code — exclude these rows |
 
 `;
 for (const s of SECTIONS) {

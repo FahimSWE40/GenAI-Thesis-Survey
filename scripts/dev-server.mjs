@@ -19,7 +19,7 @@ if (existsSync(envFile)) {
     if (m && !process.env[m[1]]) process.env[m[1]] = m[2].replace(/^["']|["']$/g, '');
   }
 }
-const { validate, insertRow } = await import('../api/submit.js');
+const { validate, insertRow, requestMeta, verifyBot } = await import('../api/submit.js');
 const useSupabase = Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml' };
@@ -37,11 +37,15 @@ createServer(async (req, res) => {
     if (body.website) return send(200, { ok: true });
     const v = validate(body);
     if (!v.ok) { console.log('✗ rejected:', v.error); return send(400, { error: v.error }); }
+    const meta = requestMeta(req);
+    const bot = await verifyBot(body.bot_token, meta.ip);
+    if (bot === 'failed') return send(403, { error: 'Bot check failed' });
+    const row = { ...v.row, ip_hash: meta.ip_hash, device_type: meta.device_type, bot_check: bot };
     try {
-      if (useSupabase) await insertRow(v.row);
-      else await appendFile(join(root, 'dev-responses.jsonl'), JSON.stringify(v.row) + '\n');
-      console.log(`✓ saved ${v.row.submission_id} → ${useSupabase ? 'Supabase' : 'dev-responses.jsonl'}`);
-      return send(200, { ok: true });
+      if (useSupabase) await insertRow(row);
+      else await appendFile(join(root, 'dev-responses.jsonl'), JSON.stringify(row) + '\n');
+      console.log(`✓ saved ${row.receipt_code} → ${useSupabase ? 'Supabase' : 'dev-responses.jsonl'}`);
+      return send(200, { ok: true, receipt: row.receipt_code });
     } catch (e) {
       console.error(e);
       return send(500, { error: 'Could not save' });

@@ -67,6 +67,33 @@ assert.equal(r.row.dem8, null);
 a = fullAnswers(); a.DEM8 = 9;
 assert.equal(validate(body(a)).ok, false);
 
+// 11. authenticity fields
+{
+  const { receiptCode, requestMeta, verifyBot } = await import('../api/submit.js');
+  const sid = randomUUID();
+  // receipt code: fixed format, same for a retried submission, different for another one
+  assert.match(receiptCode(sid), /^GA-[A-Z2-9]{4}-[A-Z2-9]{4}$/);
+  assert.equal(receiptCode(sid), receiptCode(sid));
+  assert.notEqual(receiptCode(sid), receiptCode(randomUUID()));
+  r = validate({ ...body(fullAnswers()), submission_id: sid, respondent_id: randomUUID(), src: 'DIU-CSE WhatsApp!' });
+  assert.equal(r.row.receipt_code, receiptCode(sid));
+  assert.equal(r.row.src, 'diu-csewhatsapp');
+  assert.equal(validate({ ...body(fullAnswers()), respondent_id: 'not-a-uuid' }).row.respondent_id, null);
+  // IP is only stored as a salted one-way hash; device type comes from the user agent
+  process.env.IP_HASH_SALT = 'test-salt';
+  const m1 = requestMeta({ headers: { 'x-forwarded-for': '203.0.113.7, 10.0.0.1', 'user-agent': 'Mozilla/5.0 (Linux; Android 14) Mobile' } });
+  const m2 = requestMeta({ headers: { 'x-forwarded-for': '203.0.113.7', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0)' } });
+  assert.equal(m1.ip_hash, m2.ip_hash);
+  assert.ok(!String(m1.ip_hash).includes('203.0.113.7') && m1.ip_hash.length === 32);
+  assert.equal(m1.device_type, 'mobile');
+  assert.equal(m2.device_type, 'desktop');
+  delete process.env.IP_HASH_SALT;
+  assert.equal(requestMeta({ headers: { 'x-forwarded-for': '203.0.113.7' } }).ip_hash, null);
+  // bot check is off until TURNSTILE_SECRET_KEY is set
+  delete process.env.TURNSTILE_SECRET_KEY;
+  assert.equal(await verifyBot(undefined, ''), 'not_configured');
+}
+
 console.log('All validator tests passed.');
 
 // Pre-launch reminder (does not fail the tests)
