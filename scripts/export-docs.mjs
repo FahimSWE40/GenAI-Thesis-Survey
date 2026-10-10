@@ -3,13 +3,18 @@
 //   outputs/Survey_Questionnaire_GenAI_Dependence.md   (English)
 //   outputs/Survey_Questionnaire_Bilingual_EN_BN.md    (English + Bangla)
 //   outputs/survey-items.json                          (for the workbook updater)
-import { writeFileSync } from 'node:fs';
+import { writeFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SECTIONS, SCREENING, LIKERT_LABELS, CONSENT_TEXT, FORM_VERSION, STUDY_INFO } from '../public/questions.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const outDir = join(root, '..', 'outputs');
+// The thesis documents live outside this repo; skip quietly when the folder is not there (e.g. a fresh clone).
+if (!existsSync(outDir)) {
+  console.log('Skipped questionnaire documents: ../outputs not found (only needed inside the thesis project folder).');
+  process.exit(0);
+}
 
 const TITLE = {
   en: 'Effects of GenAI Dependence on Critical Thinking, Social Connectivity, and Self-Efficacy among Bangladeshi University Students',
