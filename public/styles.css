@@ -226,3 +226,58 @@ body[data-lang="both"] .il .en + .bn::before { content: " / "; color: var(--rule
 .receipt-code { font: 600 26px/1.3 ui-monospace, 'Cascadia Mono', Consolas, monospace; letter-spacing: .06em; color: var(--ink); margin: 6px 0 8px; user-select: all; }
 .receipt p { font-size: 13.5px; margin: 0; }
 #botcheck:empty { display: none; }
+
+
+/* ---------- phones ---------- */
+.mx-ends { display: none; }
+@media (max-width: 640px) {
+  body { font-size: 15px; }
+  .masthead { padding: 20px 16px 16px; }
+  .masthead h1 { font-size: 20px; line-height: 1.3; }
+  .masthead h1 .bn { font-size: 16px; }
+  .masthead .org { font-size: 12px; }
+  .consent { font-size: 14px; }
+  .sec-head { padding: 14px 16px 12px; gap: 12px; }
+  .sec-letter { flex-basis: 30px; height: 30px; font-size: 15px; }
+  .sec-title { font-size: 16px; }
+  .sec-hint { font-size: 13.5px; }
+
+  /* answer buttons: full width, easy to tap, Bangla on its own line */
+  .opts { display: grid; grid-template-columns: 1fr; gap: 8px; }
+  .opts.short { grid-template-columns: 1fr 1fr; }
+  .opt { width: 100%; min-height: 48px; padding: 10px 12px; font-size: 15px; }
+  .opt .il .en, .opt .il .bn { display: block; }
+  body[data-lang="both"] .opt .il .en + .bn::before { content: none; }
+  .opt .il .bn { font-size: 13.5px; margin-top: 1px; }
+  .opt .box { flex-basis: 18px; height: 18px; }
+
+  /* typed answers: 16px stops iPhone from zooming in */
+  .text-input, .other-input { font-size: 16px; width: 100%; }
+
+  /* rating rows: big circles + end labels under each row */
+  .mx-cell { min-height: 52px; }
+  .mx-ends {
+    display: flex; justify-content: space-between; gap: 12px;
+    grid-column: 1 / -1; order: 99; padding: 4px 6px 0;
+    font-size: 11.5px; line-height: 1.3; color: var(--muted);
+  }
+  .mx-ends span:last-child { text-align: right; }
+  .mx-ends .il .en, .mx-ends .il .bn { display: block; }
+  body[data-lang="both"] .mx-ends .il .en + .bn::before { content: none; }
+  .mx-head { font-size: 10px; padding: 6px 6px; }
+  .mx-head b { font-size: 13px; }
+
+  .actions { padding-bottom: calc(30px + env(safe-area-inset-bottom)); }
+  .submit { min-height: 54px; font-size: 17px; }
+  .receipt-code { font-size: 22px; }
+  .done { padding: 40px 16px; }
+}
+@media (max-width: 420px) {
+  .t-long { display: none; }
+  .topbar-inner { padding: 0 12px; }
+  .lang button { padding: 7px 8px; font-size: 11.5px; }
+}
+@media (max-width: 340px) {
+  .opts.short { grid-template-columns: 1fr; }
+  .dot { width: 36px; height: 36px; }
+}

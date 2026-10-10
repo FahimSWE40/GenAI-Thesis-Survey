@@ -77,7 +77,7 @@ function choice(q) {
       ${multi ? `<div class="q-help">${t({ en: 'Select all that apply', bn: 'প্রযোজ্য সবগুলো বেছে নিন' })}</div>` : ''}
     </div>
     <div class="q-answer">
-      <div class="opts">${q.options.map(o => {
+      <div class="opts${q.options.every(o => o.en.length <= 16 && o.bn.length <= 22) ? ' short' : ''}">${q.options.map(o => {
         const on = multi ? (val || []).includes(o.v) : val === o.v;
         return `<label class="opt ${multi ? 'multi' : ''}"><input type="${multi ? 'checkbox' : 'radio'}" name="${q.id}" value="${esc(o.v)}" ${on ? 'checked' : ''}><span class="box"></span>${ti(o)}</label>`;
       }).join('')}</div>
@@ -94,6 +94,7 @@ function matrix(s) {
     const val = state.answers[it.id];
     return `<div class="mx-row${wide}" id="q-${it.id}" role="radiogroup" aria-label="${esc(it.en)}">
       <div class="mx-stmt"><span class="q-code">${it.attention ? '' : it.id}</span><div>${t(it)}${help(it)}</div></div>
+      <div class="mx-ends" aria-hidden="true"><span>${ti(SCALE[0])}</span><span>${ti(SCALE[SCALE.length - 1])}</span></div>
       ${SCALE.map(l => `<label class="mx-cell"><input type="radio" name="${it.id}" value="${l.v}" ${val === l.v ? 'checked' : ''} aria-label="${l.v} ${esc(l.en)}"><span class="dot"><span class="dot-n">${l.v}</span></span></label>`).join('')}
     </div>`;
   }).join('');
