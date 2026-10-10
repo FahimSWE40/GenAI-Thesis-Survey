@@ -19,7 +19,7 @@ if (existsSync(envFile)) {
     if (m && !process.env[m[1]]) process.env[m[1]] = m[2].replace(/^["']|["']$/g, '');
   }
 }
-const { validate, insertRow, requestMeta, verifyBot } = await import('../api/submit.js');
+const { validate, insertRow, requestMeta, verifyBot, publicError } = await import('../api/submit.js');
 const useSupabase = Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml' };
@@ -27,6 +27,14 @@ const PORT = Number(process.env.PORT) || 3000;
 
 createServer(async (req, res) => {
   const url = new URL(req.url, 'http://localhost');
+  if (url.pathname === '/api/health') {
+    const { default: health } = await import('../api/health.js');
+    const shim = {
+      setHeader: (k, v) => res.setHeader(k, v),
+      status: code => ({ json: obj => { res.writeHead(code, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(obj, null, 2)); } }),
+    };
+    return health(req, shim);
+  }
   if (url.pathname === '/api/submit') {
     if (req.method !== 'POST') { res.writeHead(405).end(); return; }
     let raw = '';
@@ -48,7 +56,8 @@ createServer(async (req, res) => {
       return send(200, { ok: true, receipt: row.receipt_code });
     } catch (e) {
       console.error(e);
-      return send(500, { error: 'Could not save' });
+      const pe = publicError(e);
+      return send(pe.status, { error: pe.error, code: pe.code });
     }
   }
   const path = normalize(url.pathname === '/' ? '/index.html' : decodeURIComponent(url.pathname));

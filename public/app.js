@@ -253,7 +253,11 @@ async function submit() {
       }),
     });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error || res.statusText);
+    if (!res.ok) {
+      const se = new Error(data.error || `Server error ${res.status}`);
+      se.server = true;
+      throw se;
+    }
     state.receipt = data.receipt || null;
     state.status = 'done';
     state.answers = {};
@@ -262,7 +266,13 @@ async function submit() {
     window.scrollTo({ top: 0 });
   } catch (e) {
     console.error(e);
-    err.innerHTML = ti({ en: 'Could not submit — check your connection and try again.', bn: 'জমা দেওয়া যায়নি — ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন। আপনার উত্তরগুলো সংরক্ষিত আছে।' });
+    err.innerHTML = e.server
+      // The server answered but could not save (e.g. database not set up) — show its reason
+      ? ti({ en: `Could not submit: ${e.message} Your answers are still saved on this device.`,
+             bn: 'জমা দেওয়া যায়নি — সার্ভারে সমস্যা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন বা গবেষকের সঙ্গে যোগাযোগ করুন। আপনার উত্তরগুলো এই ডিভাইসে সংরক্ষিত আছে।' })
+      // No answer from the server at all — a real connection problem
+      : ti({ en: 'Could not submit — check your internet connection and try again. Your answers are still saved on this device.',
+             bn: 'জমা দেওয়া যায়নি — ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন। আপনার উত্তরগুলো এই ডিভাইসে সংরক্ষিত আছে।' });
     btn.disabled = false;
   } finally {
     submitting = false;

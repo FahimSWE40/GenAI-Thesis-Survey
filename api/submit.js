@@ -135,8 +135,22 @@ export async function insertRow(row) {
   });
   if (!r.ok) {
     const detail = await r.text();
-    throw new Error(`Supabase insert failed (${r.status}): ${detail.slice(0, 300)}`);
+    const err = new Error(`Supabase insert failed (${r.status}): ${detail.slice(0, 300)}`);
+    err.status = r.status;
+    err.detail = detail;
+    throw err;
   }
+}
+
+// Turns a save error into a message that is safe and useful to show in the form.
+export function publicError(e) {
+  const msg = String(e && e.message || '');
+  const detail = String(e && e.detail || '');
+  if (msg.includes('missing SUPABASE_URL')) return { status: 503, error: 'Survey server is not configured yet (database settings missing).', code: 'not_configured' };
+  if (detail.includes('PGRST205') || e?.status === 404) return { status: 503, error: 'Database is not set up yet (survey table not found).', code: 'no_table' };
+  if (e?.status === 401 || e?.status === 403) return { status: 503, error: 'Server cannot access the database (wrong or missing secret key).', code: 'bad_key' };
+  if (detail.includes('23514') || detail.includes('23502')) return { status: 400, error: 'An answer did not match the database rules. Please reload the page and try again.', code: 'constraint' };
+  return { status: 500, error: 'Could not save your response. Please try again.', code: 'save_failed' };
 }
 
 export default async function handler(req, res) {
@@ -167,6 +181,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true, receipt: row.receipt_code });
   } catch (e) {
     console.error(e);
-    return res.status(500).json({ error: 'Could not save your response. Please try again.' });
+    const pe = publicError(e);
+    return res.status(pe.status).json({ error: pe.error, code: pe.code });
   }
 }
