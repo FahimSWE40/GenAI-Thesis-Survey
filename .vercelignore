@@ -1,0 +1,4 @@
+.env
+.env.local
+dev-responses.jsonl
+node_modules
