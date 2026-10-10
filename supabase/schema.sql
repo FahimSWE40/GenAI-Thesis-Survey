@@ -93,6 +93,7 @@ create table if not exists public.responses (
 -- RLS on + no policies = the public anon key has no access at all.
 alter table public.responses enable row level security;
 revoke all on public.responses from anon, authenticated;
+grant select, insert on public.responses to service_role;   -- the form's server (newer projects do not grant this automatically)
 
 -- Append-only: once saved, a response can never be edited or deleted (not even by the researcher).
 -- Removing this protection would require a new migration, which Supabase records in its history.
@@ -118,6 +119,7 @@ create table if not exists public.withdrawals (
 );
 alter table public.withdrawals enable row level security;
 revoke all on public.withdrawals from anon, authenticated;
+grant select, insert on public.withdrawals to service_role;
 
 comment on column public.responses.dem1 is 'DEM1: Your age | 1=18–20 years; 2=21–23 years; 3=24–26 years; 4=27 years or above';
 comment on column public.responses.dem2 is 'DEM2: Your gender | 1=Male; 2=Female';
@@ -302,3 +304,5 @@ select
 from public.responses;
 
 revoke all on public.responses_spss from anon, authenticated;
+grant select on public.responses_spss to service_role;
+notify pgrst, 'reload schema';   -- let the API see the new tables immediately
