@@ -1,6 +1,8 @@
 import { SCREENING, SECTIONS, LIKERT_LABELS, FORM_VERSION, CONSENT_TEXT, TEXT_PLACEHOLDER, STUDY_INFO } from './questions.js';
 
-const STORE_KEY = 'genai-survey-v' + FORM_VERSION;
+// Stable key: a new form version must never wipe a participant's half-finished answers.
+// (Answers are keyed by item code; codes that no longer exist are simply ignored.)
+const STORE_KEY = 'genai-survey-progress';
 const app = document.getElementById('app');
 const bar = document.getElementById('progressBar');
 
@@ -27,7 +29,17 @@ function fresh() {
   return { answers: {}, startedAt: new Date().toISOString(), submissionId: crypto.randomUUID(), lang: 'both', status: 'active', src: null, receipt: null };
 }
 function load() {
-  try { const s = JSON.parse(localStorage.getItem(STORE_KEY)); return s && s.answers ? s : null; } catch { return null; }
+  try {
+    const s = JSON.parse(localStorage.getItem(STORE_KEY));
+    if (s && s.answers) return s;
+    // Carry over unfinished answers saved by older versions (key 'genai-survey-v<version>')
+    const old = Object.keys(localStorage).filter(k => /^genai-survey-v\d/.test(k)).sort().pop();
+    if (old) {
+      const o = JSON.parse(localStorage.getItem(old));
+      if (o && o.answers && o.status !== 'done') { localStorage.setItem(STORE_KEY, JSON.stringify(o)); return o; }
+    }
+    return null;
+  } catch { return null; }
 }
 function save() {
   try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch { /* storage blocked: form still works */ }
