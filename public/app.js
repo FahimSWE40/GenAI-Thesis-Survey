@@ -269,10 +269,10 @@ async function submit() {
     err.innerHTML = e.server
       // The server answered but could not save (e.g. database not set up) — show its reason
       ? ti({ en: `Could not submit: ${e.message} Your answers are still saved on this device.`,
-             bn: 'জমা দেওয়া যায়নি — সার্ভারে সমস্যা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন বা গবেষকের সঙ্গে যোগাযোগ করুন। আপনার উত্তরগুলো এই ডিভাইসে সংরক্ষিত আছে।' })
+             bn: 'জমা দেওয়া যায়নি। সার্ভারে সমস্যা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন বা গবেষকের সঙ্গে যোগাযোগ করুন। আপনার উত্তরগুলো এই ডিভাইসে সংরক্ষিত আছে।' })
       // No answer from the server at all — a real connection problem
-      : ti({ en: 'Could not submit — check your internet connection and try again. Your answers are still saved on this device.',
-             bn: 'জমা দেওয়া যায়নি — ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন। আপনার উত্তরগুলো এই ডিভাইসে সংরক্ষিত আছে।' });
+      : ti({ en: 'Could not submit. Check your internet connection and try again. Your answers are still saved on this device.',
+             bn: 'জমা দেওয়া যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন। আপনার উত্তরগুলো এই ডিভাইসে সংরক্ষিত আছে।' });
     btn.disabled = false;
   } finally {
     submitting = false;

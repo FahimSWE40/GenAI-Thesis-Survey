@@ -164,7 +164,7 @@ comment on column public.responses.ase3 is 'ASE3: I am confident I can understan
 comment on column public.responses.ase4 is 'ASE4: I can do well in exams by preparing on my own.';
 comment on column public.responses.gse1 is 'GSE1: If I try hard enough, I can always solve difficult problems.';
 comment on column public.responses.gse2 is 'GSE2: I am confident I can handle unexpected situations well.';
-comment on column public.responses.att2 is 'ATT2: This is a check question — please choose "Disagree" (2). [ATTENTION CHECK: correct = 2]';
+comment on column public.responses.att2 is 'ATT2: This is a check question. Please choose "Disagree" (2). [ATTENTION CHECK: correct = 2]';
 comment on column public.responses.gse3 is 'GSE3: I can stay calm in hard times because I trust my ability to handle them.';
 comment on column public.responses.gse4 is 'GSE4: When I have a problem, I can usually think of more than one way to solve it.';
 comment on column public.responses.gd1 is 'GD1: I use GenAI before I even try to do a study task myself.';

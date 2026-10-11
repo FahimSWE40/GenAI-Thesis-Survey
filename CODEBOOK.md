@@ -108,7 +108,7 @@ Scale: 1 = Strongly Disagree, 2 = Disagree, 3 = Neutral, 4 = Agree, 5 = Strongly
 | ase4 | I can do well in exams by preparing on my own. |  |
 | gse1 | If I try hard enough, I can always solve difficult problems. |  |
 | gse2 | I am confident I can handle unexpected situations well. |  |
-| att2 | This is a check question — please choose "Disagree" (2). | Attention check (correct = 2) |
+| att2 | This is a check question. Please choose "Disagree" (2). | Attention check (correct = 2) |
 | gse3 | I can stay calm in hard times because I trust my ability to handle them. |  |
 | gse4 | When I have a problem, I can usually think of more than one way to solve it. |  |
 

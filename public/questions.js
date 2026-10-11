@@ -41,8 +41,8 @@ export const STUDY_INFO = {
 };
 
 export const CONSENT_TEXT = {
-  en: 'This survey is part of a university research study. It asks how students use GenAI tools like ChatGPT, Gemini and Copilot, and how this relates to their thinking, relationships and confidence. It takes about 12–15 minutes. Taking part is your choice, and you can stop at any time. We do not ask for your name, student ID or email, and results are only reported for the whole group. To check that responses are genuine, we record your device type and a scrambled code of your internet connection (your IP address is not stored). After submitting, you will get a response code that you can use to withdraw your answers. There are no right or wrong answers — please answer honestly.',
-  bn: 'এই জরিপটি একটি বিশ্ববিদ্যালয় গবেষণার অংশ। এখানে জানতে চাওয়া হচ্ছে, শিক্ষার্থীরা ChatGPT, Gemini, Copilot-এর মতো GenAI টুল কীভাবে ব্যবহার করেন এবং এর সঙ্গে তাঁদের চিন্তা, সম্পর্ক ও আত্মবিশ্বাসের কী সম্পর্ক। এতে প্রায় ১২–১৫ মিনিট লাগবে। অংশ নেওয়া আপনার ইচ্ছা, এবং যেকোনো সময় থেমে যেতে পারেন। আপনার নাম, স্টুডেন্ট আইডি বা ইমেইল চাওয়া হবে না, আর ফলাফল শুধু পুরো দলের জন্য প্রকাশ করা হবে। উত্তরগুলো আসল কি না যাচাই করতে আমরা আপনার ডিভাইসের ধরন এবং ইন্টারনেট সংযোগের একটি এনক্রিপ্ট করা কোড সংরক্ষণ করি (আপনার আইপি ঠিকানা সংরক্ষণ করা হয় না)। জমা দেওয়ার পর আপনি একটি কোড পাবেন, যা দিয়ে পরে উত্তর প্রত্যাহার করতে পারবেন। এখানে কোনো সঠিক বা ভুল উত্তর নেই — অনুগ্রহ করে সৎভাবে উত্তর দিন।',
+  en: 'This survey is part of a university research study. It asks how students use GenAI tools like ChatGPT, Gemini and Copilot, and how this relates to their thinking, relationships and confidence. It takes about 12–15 minutes. Taking part is your choice, and you can stop at any time. We do not ask for your name, student ID or email, and results are only reported for the whole group. To check that responses are genuine, we record your device type and a scrambled code of your internet connection (your IP address is not stored). After submitting, you will get a response code that you can use to withdraw your answers. There are no right or wrong answers, so please answer honestly.',
+  bn: 'এই জরিপটি একটি বিশ্ববিদ্যালয় গবেষণার অংশ। এখানে জানতে চাওয়া হচ্ছে, শিক্ষার্থীরা ChatGPT, Gemini, Copilot-এর মতো GenAI টুল কীভাবে ব্যবহার করেন এবং এর সঙ্গে তাঁদের চিন্তা, সম্পর্ক ও আত্মবিশ্বাসের কী সম্পর্ক। এতে প্রায় ১২–১৫ মিনিট লাগবে। অংশ নেওয়া আপনার ইচ্ছা, এবং যেকোনো সময় থেমে যেতে পারেন। আপনার নাম, স্টুডেন্ট আইডি বা ইমেইল চাওয়া হবে না, আর ফলাফল শুধু পুরো দলের জন্য প্রকাশ করা হবে। উত্তরগুলো আসল কি না যাচাই করতে আমরা আপনার ডিভাইসের ধরন এবং ইন্টারনেট সংযোগের একটি এনক্রিপ্ট করা কোড সংরক্ষণ করি (আপনার আইপি ঠিকানা সংরক্ষণ করা হয় না)। জমা দেওয়ার পর আপনি একটি কোড পাবেন, যা দিয়ে পরে উত্তর প্রত্যাহার করতে পারবেন। এখানে কোনো সঠিক বা ভুল উত্তর নেই, তাই অনুগ্রহ করে সৎভাবে উত্তর দিন।',
 };
 
 // Screening questions. Any answer other than v=1 ends the survey; nothing is saved.
@@ -123,7 +123,7 @@ export const SECTIONS = [
         { v: 3, en: '3rd year', bn: '৩য় বর্ষ' },
         { v: 4, en: '4th year or above', bn: '৪র্থ বর্ষ বা তার বেশি' } ] },
       { id: 'DEM8', type: 'single', optional: true, en: 'What is your current CGPA (out of 4.00)?', bn: 'আপনার বর্তমান সিজিপিএ কত (৪.০০-এর মধ্যে)?',
-        help: { en: 'Optional — leave this blank if you do not have a CGPA yet.', bn: 'ঐচ্ছিক — এখনো সিজিপিএ না থাকলে এটি ফাঁকা রাখুন।' }, options: [
+        help: { en: 'Optional: leave this blank if you do not have a CGPA yet.', bn: 'ঐচ্ছিক: এখনো সিজিপিএ না থাকলে এটি ফাঁকা রাখুন।' }, options: [
         { v: 1, en: 'Below 2.50', bn: '২.৫০-এর কম' },
         { v: 2, en: '2.50 – 2.99', bn: '২.৫০ – ২.৯৯' },
         { v: 3, en: '3.00 – 3.49', bn: '৩.০০ – ৩.৪৯' },
@@ -145,8 +145,8 @@ export const SECTIONS = [
     id: 'C', kind: 'choice',
     en: 'Your Use of GenAI', bn: 'আপনার GenAI ব্যবহার',
     hint: {
-      en: 'In this survey, "GenAI tools" means AI chatbots that write text, code or images for you — like ChatGPT, Gemini, Copilot, Claude, DeepSeek, Perplexity or Meta AI. "Studies" means any study work: assignments, lab reports, coding, projects, presentations, thesis, class preparation and exam preparation. Think about the last 6 months.',
-      bn: 'এই জরিপে "GenAI টুল" মানে এমন এআই চ্যাটবট, যা আপনার জন্য লেখা, কোড বা ছবি তৈরি করে — যেমন ChatGPT, Gemini, Copilot, Claude, DeepSeek, Perplexity বা Meta AI। "পড়াশোনা" মানে পড়াশোনার যেকোনো কাজ: অ্যাসাইনমেন্ট, ল্যাব রিপোর্ট, কোডিং, প্রজেক্ট, প্রেজেন্টেশন, থিসিস, ক্লাস ও পরীক্ষার প্রস্তুতি। গত ৬ মাসের কথা ভেবে উত্তর দিন।',
+      en: 'In this survey, "GenAI tools" means AI chatbots that write text, code or images for you, such as ChatGPT, Gemini, Copilot, Claude, DeepSeek, Perplexity or Meta AI. "Studies" means any study work: assignments, lab reports, coding, projects, presentations, thesis, class preparation and exam preparation. Think about the last 6 months.',
+      bn: 'এই জরিপে "GenAI টুল" মানে এমন এআই চ্যাটবট, যা আপনার জন্য লেখা, কোড বা ছবি তৈরি করে, যেমন ChatGPT, Gemini, Copilot, Claude, DeepSeek, Perplexity বা Meta AI। "পড়াশোনা" মানে পড়াশোনার যেকোনো কাজ: অ্যাসাইনমেন্ট, ল্যাব রিপোর্ট, কোডিং, প্রজেক্ট, প্রেজেন্টেশন, থিসিস, ক্লাস ও পরীক্ষার প্রস্তুতি। গত ৬ মাসের কথা ভেবে উত্তর দিন।',
     },
     questions: [
       { id: 'USE1', type: 'multi', en: 'Which GenAI tools do you use for your studies?', bn: 'পড়াশোনায় আপনি কোন কোন GenAI টুল ব্যবহার করেন?', options: [
@@ -213,7 +213,7 @@ export const SECTIONS = [
     id: 'D', kind: 'likert', short: 'ct', construct: 'Critical Thinking (DV1)',
     en: 'How You Think', bn: 'আপনি কীভাবে ভাবেন',
     hint: {
-      en: 'These sentences are about how you usually think and make decisions — in daily life and in your studies. They are not about AI. Choose how much you agree with each one.',
+      en: 'These sentences are about how you usually think and make decisions in daily life and in your studies. They are not about AI. Choose how much you agree with each one.',
       bn: 'এই বাক্যগুলো দৈনন্দিন জীবনে ও পড়াশোনায় আপনি সাধারণত কীভাবে ভাবেন ও সিদ্ধান্ত নেন, সে সম্পর্কে। এগুলো এআই নিয়ে নয়। প্রতিটি বাক্যের সঙ্গে আপনি কতটা একমত, তা বেছে নিন।',
     },
     items: [
@@ -226,7 +226,7 @@ export const SECTIONS = [
       { id: 'CT5', en: 'I often think back on what has happened to me so that I can learn from it.', bn: 'যা ঘটেছে তা থেকে শেখার জন্য আমি প্রায়ই সেগুলো নিয়ে আবার ভাবি।' },
       { id: 'CT6', en: 'It is important to me to understand how other people see an issue.', bn: 'কোনো বিষয়ে অন্যরা কীভাবে ভাবে, তা বোঝা আমার কাছে গুরুত্বপূর্ণ।' },
       { id: 'CT7', en: 'I look for proof before I accept something as true.', bn: 'কোনো কিছু সত্য বলে মেনে নেওয়ার আগে আমি প্রমাণ খুঁজি।' },
-      { id: 'CT8', en: 'I often look back at how I worked something out, to see if I could have done it better.', bn: 'কোনো কিছু কীভাবে ভেবে বের করেছি, তা আমি প্রায়ই আবার দেখি — আরও ভালোভাবে করা যেত কি না।' },
+      { id: 'CT8', en: 'I often look back at how I worked something out, to see if I could have done it better.', bn: 'কোনো কিছু কীভাবে ভেবে বের করেছি, তা আমি প্রায়ই আবার দেখি, আরও ভালোভাবে করা যেত কি না।' },
     ],
   },
   {
@@ -260,8 +260,8 @@ export const SECTIONS = [
     id: 'F', kind: 'likert', short: 'se', construct: 'Self-Efficacy (DV3)',
     en: 'Confidence in Yourself', bn: 'নিজের ওপর আস্থা',
     hint: {
-      en: 'These sentences are about how sure you feel about your own abilities — when you work by yourself, without help from people or tools.',
-      bn: 'এই বাক্যগুলো নিজের সক্ষমতার ওপর আপনার আস্থা নিয়ে — যখন আপনি কারও বা কোনো টুলের সাহায্য ছাড়া নিজে কাজ করেন।',
+      en: 'These sentences are about how sure you feel about your own abilities when you work by yourself, without help from people or tools.',
+      bn: 'এই বাক্যগুলো নিজের সক্ষমতার ওপর আপনার আস্থা নিয়ে, যখন আপনি কারও বা কোনো টুলের সাহায্য ছাড়া নিজে কাজ করেন।',
     },
     items: [
       { id: 'ASE1', en: 'I am sure I can learn the skills taught in my courses this semester through my own effort.', bn: 'আমি নিশ্চিত, এই সেমিস্টারে কোর্সে শেখানো দক্ষতাগুলো আমি নিজের চেষ্টায় শিখতে পারব।' },
@@ -270,7 +270,7 @@ export const SECTIONS = [
       { id: 'ASE4', en: 'I can do well in exams by preparing on my own.', bn: 'নিজে নিজে প্রস্তুতি নিয়েই আমি পরীক্ষায় ভালো করতে পারি।' },
       { id: 'GSE1', en: 'If I try hard enough, I can always solve difficult problems.', bn: 'যথেষ্ট চেষ্টা করলে আমি সবসময় কঠিন সমস্যার সমাধান করতে পারি।' },
       { id: 'GSE2', en: 'I am confident I can handle unexpected situations well.', bn: 'আমি বিশ্বাস করি, হঠাৎ আসা পরিস্থিতি আমি ভালোভাবে সামলাতে পারব।' },
-      { id: 'ATT2', attention: 2, en: 'This is a check question — please choose "Disagree" (2).', bn: 'এটি একটি যাচাই-প্রশ্ন — অনুগ্রহ করে "একমত নই" (২) বেছে নিন।' },
+      { id: 'ATT2', attention: 2, en: 'This is a check question. Please choose "Disagree" (2).', bn: 'এটি একটি যাচাই-প্রশ্ন। অনুগ্রহ করে "একমত নই" (২) বেছে নিন।' },
       { id: 'GSE3', en: 'I can stay calm in hard times because I trust my ability to handle them.', bn: 'কঠিন সময়েও আমি শান্ত থাকতে পারি, কারণ পরিস্থিতি সামলানোর ক্ষমতার ওপর আমার আস্থা আছে।' },
       { id: 'GSE4', en: 'When I have a problem, I can usually think of more than one way to solve it.', bn: 'কোনো সমস্যায় পড়লে আমি সাধারণত তা সমাধানের একাধিক উপায় ভাবতে পারি।' },
     ],
