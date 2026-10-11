@@ -3,6 +3,7 @@
 // and the generators that write supabase/schema.sql, CODEBOOK.md and the
 // questionnaire documents in ../outputs.
 //
+// Version 2.7 — wording quality pass (12 fixes: grammar, consistency, single-idea items, positive wording, clearer Bangla); codes and values unchanged.
 // Version 2.6 — validation against Thesis_Data_Use_and_Expected_Outcomes.md: human-connectedness section (HC1–HC6), CT9, CO6, AL9, USE10; sensitive items optional.
 // Version 2.5 — Social Connectivity rewritten by the researcher (SC1–SC9, topic labels, new instructions and scale wording).
 // Version 2.4 — plain-language rewrite of every question, title and introduction (EN + BN).
@@ -14,7 +15,7 @@
 // area removed; Bangla text revised throughout.
 // Question types: 'single' (choose one), 'multi' (choose any), 'text' (typed answer).
 
-export const FORM_VERSION = '2.6';
+export const FORM_VERSION = '2.7';
 
 const YES_NO = [
   { v: 1, en: 'Yes', bn: 'হ্যাঁ' },
@@ -103,7 +104,7 @@ export const SECTIONS = [
       { id: 'DEM4', type: 'single', en: 'What type of institution do you study at?', bn: 'আপনি কোন ধরনের প্রতিষ্ঠানে পড়েন?', options: [
         { v: 1, en: 'Public university', bn: 'পাবলিক বিশ্ববিদ্যালয়' },
         { v: 2, en: 'Private university', bn: 'প্রাইভেট বিশ্ববিদ্যালয়' },
-        { v: 3, en: 'College under National University', bn: 'জাতীয় বিশ্ববিদ্যালয়ের অধীন কলেজ' } ] },
+        { v: 3, en: 'College affiliated with a university (e.g., National University)', bn: 'কোনো বিশ্ববিদ্যালয়ের অধিভুক্ত কলেজ (যেমন জাতীয় বিশ্ববিদ্যালয়)' } ] },
       { id: 'DEM5', type: 'text', maxLength: 150, en: 'Name of your department', bn: 'আপনার বিভাগের নাম',
         help: { en: 'For example: Software Engineering', bn: 'যেমন: সফটওয়্যার ইঞ্জিনিয়ারিং' } },
       { id: 'DEM6', type: 'single', en: 'Which subject group is your department in?', bn: 'আপনার বিভাগ কোন বিষয়-শাখার মধ্যে পড়ে?',
@@ -127,9 +128,9 @@ export const SECTIONS = [
       { id: 'DEM8', type: 'single', optional: true, en: 'What is your current CGPA (out of 4.00)?', bn: 'আপনার বর্তমান সিজিপিএ কত (৪.০০-এর মধ্যে)?',
         help: { en: 'Optional: leave this blank if you do not have a CGPA yet.', bn: 'ঐচ্ছিক: এখনো সিজিপিএ না থাকলে এটি ফাঁকা রাখুন।' }, options: [
         { v: 1, en: 'Below 2.50', bn: '২.৫০-এর কম' },
-        { v: 2, en: '2.50 – 2.99', bn: '২.৫০ – ২.৯৯' },
-        { v: 3, en: '3.00 – 3.49', bn: '৩.০০ – ৩.৪৯' },
-        { v: 4, en: '3.50 – 4.00', bn: '৩.৫০ – ৪.০০' } ] },
+        { v: 2, en: '2.50–2.99', bn: '২.৫০–২.৯৯' },
+        { v: 3, en: '3.00–3.49', bn: '৩.০০–৩.৪৯' },
+        { v: 4, en: '3.50–4.00', bn: '৩.৫০–৪.০০' } ] },
       { id: 'DEM9', type: 'single', en: 'Which device do you mostly use for studying?', bn: 'পড়াশোনার জন্য আপনি বেশিরভাগ সময় কোন ডিভাইস ব্যবহার করেন?', options: [
         { v: 1, en: 'Smartphone', bn: 'স্মার্টফোন' },
         { v: 2, en: 'Laptop', bn: 'ল্যাপটপ' },
@@ -147,7 +148,7 @@ export const SECTIONS = [
     id: 'C', kind: 'choice',
     en: 'Your Use of GenAI', bn: 'আপনার GenAI ব্যবহার',
     hint: {
-      en: 'In this survey, "GenAI tools" means AI chatbots that write text, code or images for you, such as ChatGPT, Gemini, Copilot, Claude, DeepSeek, Perplexity or Meta AI. "Studies" means any study work: assignments, lab reports, coding, projects, presentations, thesis, class preparation and exam preparation. Think about the last 6 months.',
+      en: 'In this survey, "GenAI tools" means AI chatbots that create text, code or images for you, such as ChatGPT, Gemini, Copilot, Claude, DeepSeek, Perplexity or Meta AI. "Studies" means any study work: assignments, lab reports, coding, projects, presentations, thesis, class preparation and exam preparation. Think about the last 6 months.',
       bn: 'এই জরিপে "GenAI টুল" মানে এমন এআই চ্যাটবট, যা আপনার জন্য লেখা, কোড বা ছবি তৈরি করে, যেমন ChatGPT, Gemini, Copilot, Claude, DeepSeek, Perplexity বা Meta AI। "পড়াশোনা" মানে পড়াশোনার যেকোনো কাজ: অ্যাসাইনমেন্ট, ল্যাব রিপোর্ট, কোডিং, প্রজেক্ট, প্রেজেন্টেশন, থিসিস, ক্লাস ও পরীক্ষার প্রস্তুতি। গত ৬ মাসের কথা ভেবে উত্তর দিন।',
     },
     questions: [
@@ -175,7 +176,7 @@ export const SECTIONS = [
         { v: 5, en: 'Several times every day', bn: 'প্রতিদিন কয়েকবার' } ] },
       { id: 'USE4', type: 'single', en: 'On a day you use it, how long do you use GenAI for your studies?', bn: 'যেদিন ব্যবহার করেন, সেদিন পড়াশোনায় কতক্ষণ GenAI ব্যবহার করেন?', options: [
         { v: 1, en: 'Less than 30 minutes', bn: '৩০ মিনিটের কম' },
-        { v: 2, en: '30 minutes – 1 hour', bn: '৩০ মিনিট – ১ ঘণ্টা' },
+        { v: 2, en: '30 minutes to 1 hour', bn: '৩০ মিনিট থেকে ১ ঘণ্টা' },
         { v: 3, en: '1–2 hours', bn: '১–২ ঘণ্টা' },
         { v: 4, en: '2–3 hours', bn: '২–৩ ঘণ্টা' },
         { v: 5, en: 'More than 3 hours', bn: '৩ ঘণ্টার বেশি' } ] },
@@ -198,7 +199,7 @@ export const SECTIONS = [
         { v: 3, en: 'Use it as a start, then rewrite it in my own words', bn: 'শুরু হিসেবে নিই, তারপর নিজের ভাষায় নতুন করে লিখি' },
         { v: 4, en: 'Only use it to check or improve my own work', bn: 'শুধু নিজের কাজ যাচাই বা আরও ভালো করতে ব্যবহার করি' } ] },
       { id: 'USE7', type: 'single', en: 'Do you pay for a GenAI tool (for example, ChatGPT Plus)?', bn: 'আপনি কি কোনো GenAI টুলের জন্য টাকা দেন (যেমন ChatGPT Plus)?', options: YES_NO },
-      { id: 'USE8', type: 'single', en: 'Has your university or a teacher taught you, or given you rules, about using AI in your studies?', bn: 'আপনার বিশ্ববিদ্যালয় বা কোনো শিক্ষক কি পড়াশোনায় এআই ব্যবহার নিয়ে কিছু শিখিয়েছেন বা নিয়ম দিয়েছেন?', options: [
+      { id: 'USE8', type: 'single', en: 'Have you received any training or guidelines on using AI in your studies from your university or teachers?', bn: 'পড়াশোনায় এআই ব্যবহার নিয়ে আপনি কি আপনার বিশ্ববিদ্যালয় বা শিক্ষকদের কাছ থেকে কোনো প্রশিক্ষণ বা নির্দেশনা পেয়েছেন?', options: [
         { v: 1, en: 'Yes', bn: 'হ্যাঁ' },
         { v: 2, en: 'No', bn: 'না' },
         { v: 3, en: 'Not sure', bn: 'নিশ্চিত নই' } ] },
@@ -209,7 +210,8 @@ export const SECTIONS = [
         { v: 3, en: 'Sometimes', bn: 'মাঝে মাঝে' },
         { v: 4, en: 'Often', bn: 'প্রায়ই' },
         { v: 5, en: 'Very often', bn: 'খুব প্রায়ই' } ] },
-      { id: 'USE10', type: 'multi', en: 'Apart from your studies, what else do you use GenAI for?', bn: 'পড়াশোনার বাইরে আপনি আর কী কী কাজে GenAI ব্যবহার করেন?', options: [
+      { id: 'USE10', type: 'multi', en: 'Apart from your studies, what else do you use GenAI for?', bn: 'পড়াশোনার বাইরে আপনি আর কী কী কাজে GenAI ব্যবহার করেন?',
+        help: { en: 'If you use GenAI only for your studies, choose "I do not use GenAI outside my studies" and nothing else.', bn: 'শুধু পড়াশোনার জন্য GenAI ব্যবহার করলে কেবল "পড়াশোনার বাইরে GenAI ব্যবহার করি না" বেছে নিন।' }, options: [
         { v: 'info', en: 'Searching for information', bn: 'তথ্য খোঁজা' },
         { v: 'messages', en: 'Writing messages, posts or emails', bn: 'বার্তা, পোস্ট বা ইমেইল লেখা' },
         { v: 'entertainment', en: 'Entertainment or fun', bn: 'বিনোদন বা মজা' },
@@ -239,7 +241,7 @@ export const SECTIONS = [
       { id: 'CT5', en: 'I often think back on what has happened to me so that I can learn from it.', bn: 'যা ঘটেছে তা থেকে শেখার জন্য আমি প্রায়ই সেগুলো নিয়ে আবার ভাবি।' },
       { id: 'CT6', en: 'It is important to me to understand how other people see an issue.', bn: 'কোনো বিষয়ে অন্যরা কীভাবে ভাবে, তা বোঝা আমার কাছে গুরুত্বপূর্ণ।' },
       { id: 'CT7', en: 'I look for proof before I accept something as true.', bn: 'কোনো কিছু সত্য বলে মেনে নেওয়ার আগে আমি প্রমাণ খুঁজি।' },
-      { id: 'CT8', en: 'I often look back at how I worked something out, to see if I could have done it better.', bn: 'কোনো কিছু কীভাবে ভেবে বের করেছি, তা আমি প্রায়ই আবার দেখি, আরও ভালোভাবে করা যেত কি না।' },
+      { id: 'CT8', en: 'I often look back at how I worked something out, to see if I could have done it better.', bn: 'কোনো কিছু কীভাবে ভেবে বের করেছি, আমি প্রায়ই তা ফিরে দেখি, যাতে বুঝতে পারি আরও ভালোভাবে করা যেত কি না।' },
       { id: 'CT9', en: 'Before reaching a conclusion, I consider more than one possible explanation.', bn: 'কোনো সিদ্ধান্তে পৌঁছানোর আগে আমি একাধিক সম্ভাব্য ব্যাখ্যা বিবেচনা করি।' },
     ],
   },
@@ -249,8 +251,8 @@ export const SECTIONS = [
     id: 'E', kind: 'likert', short: 'sc', construct: 'Social Connectivity (DV2)',
     en: 'People or AI?', bn: 'মানুষ নাকি এআই?',
     hint: {
-      en: 'For each situation below, choose who you prefer to turn to: a person (such as a friend, family member, classmate, senior, or teacher) or an AI chatbot (such as ChatGPT, Meta AI, Snapchat My AI, Character.AI, or Replika). Please answer based on your personal preferences and experiences. Even if you have never used an AI chatbot in a particular situation, select the option that best reflects your preference.',
-      bn: 'নিচের প্রতিটি পরিস্থিতিতে আপনি কার কাছে যেতে বেশি পছন্দ করেন, তা নির্বাচন করুন: একজন মানুষ (যেমন বন্ধু, পরিবারের সদস্য, সহপাঠী, সিনিয়র বা শিক্ষক), নাকি একটি এআই চ্যাটবট (যেমন ChatGPT, Meta AI, Snapchat My AI, Character.AI বা Replika)। আপনার ব্যক্তিগত পছন্দ ও অভিজ্ঞতার ভিত্তিতে উত্তর দিন। কোনো পরিস্থিতিতে আগে কখনো এআই চ্যাটবট ব্যবহার না করলেও, আপনার পছন্দ অনুযায়ী সবচেয়ে উপযুক্ত উত্তরটি নির্বাচন করুন।',
+      en: 'For each situation below, choose who you prefer to turn to: a person (such as a friend, family member, classmate, senior, or teacher) or an AI chatbot (such as ChatGPT, Meta AI, Snapchat My AI, Character.AI, or Replika). Please answer based on your personal preferences and experiences. Even if you have never used an AI chatbot in a particular situation, select the option that best reflects your preference. Questions marked optional can be skipped.',
+      bn: 'নিচের প্রতিটি পরিস্থিতিতে আপনি কার কাছে যেতে বেশি পছন্দ করেন, তা নির্বাচন করুন: একজন মানুষ (যেমন বন্ধু, পরিবারের সদস্য, সহপাঠী, সিনিয়র বা শিক্ষক), নাকি একটি এআই চ্যাটবট (যেমন ChatGPT, Meta AI, Snapchat My AI, Character.AI বা Replika)। আপনার ব্যক্তিগত পছন্দ ও অভিজ্ঞতার ভিত্তিতে উত্তর দিন। কোনো পরিস্থিতিতে আগে কখনো এআই চ্যাটবট ব্যবহার না করলেও, আপনার পছন্দ অনুযায়ী সবচেয়ে উপযুক্ত উত্তরটি নির্বাচন করুন। "ঐচ্ছিক" লেখা প্রশ্নগুলো বাদ দিতে পারেন।',
     },
     scale: [
       { v: 1, en: 'Always an AI chatbot', bn: 'সবসময় এআই চ্যাটবট' },
@@ -275,7 +277,7 @@ export const SECTIONS = [
       { id: 'SC5', optional: true, topic: { en: 'Expressing Feelings', bn: 'অনুভূতি প্রকাশ' },
         en: 'When I want to express my thoughts and feelings openly, I feel more comfortable talking to…',
         bn: 'যখন আমি নিজের চিন্তা ও অনুভূতি খোলামেলাভাবে প্রকাশ করতে চাই, তখন আমি কথা বলতে বেশি স্বাচ্ছন্দ্য বোধ করি…' },
-      { id: 'SC6', optional: true, topic: { en: 'Feeling Understood', bn: 'নিজেকে বোঝাতে পারা' },
+      { id: 'SC6', optional: true, topic: { en: 'Feeling Understood', bn: 'কেউ আমাকে বুঝুক' },
         en: 'When I want someone to listen to me and understand my feelings, I prefer to talk to…',
         bn: 'যখন আমি চাই কেউ আমার কথা মন দিয়ে শুনুক এবং আমার অনুভূতি বুঝুক, তখন আমি কথা বলতে বেশি পছন্দ করি…' },
       { id: 'SC7', topic: { en: 'Casual Conversation', bn: 'হালকা আড্ডা' },
@@ -300,7 +302,7 @@ export const SECTIONS = [
     },
     items: [
       { id: 'HC1', en: 'I feel close to the people in my life, such as friends and family.', bn: 'আমার জীবনের মানুষদের, যেমন বন্ধু ও পরিবারের সঙ্গে আমি ঘনিষ্ঠতা অনুভব করি।' },
-      { id: 'HC2', en: 'I regularly talk with my friends or family, in person or by phone.', bn: 'আমি নিয়মিত বন্ধু বা পরিবারের সঙ্গে কথা বলি, সরাসরি বা ফোনে।' },
+      { id: 'HC2', en: 'I regularly talk with my friends or family, in person, by phone or by message.', bn: 'আমি নিয়মিত বন্ধু বা পরিবারের সঙ্গে কথা বলি, সরাসরি, ফোনে বা মেসেজে।' },
       { id: 'HC3', en: 'I feel that I belong among the students at my university.', bn: 'আমার বিশ্ববিদ্যালয়ের শিক্ষার্থীদের মধ্যে আমি নিজেকে তাঁদেরই একজন মনে করি।' },
       { id: 'HC4', en: 'When I need support, I have people I can turn to.', bn: 'সহায়তার প্রয়োজন হলে আমার পাশে দাঁড়ানোর মতো মানুষ আছে।' },
       { id: 'HC5', en: 'I feel confident communicating with other people.', bn: 'অন্য মানুষের সঙ্গে যোগাযোগ করতে আমি আত্মবিশ্বাসী বোধ করি।' },
@@ -342,7 +344,7 @@ export const SECTIONS = [
         help: { en: 'For example, which steps to take or how to structure an answer.', bn: 'যেমন: কোন ধাপে কাজ করব বা উত্তর কীভাবে সাজাব।' } },
       { id: 'GD5', en: 'I trust GenAI’s answers more than my own first idea.', bn: 'নিজের প্রথম ধারণার চেয়ে আমি GenAI-এর উত্তরে বেশি ভরসা করি।' },
       { id: 'GD6', en: 'I end up using GenAI for my studies more than I planned.', bn: 'পড়াশোনায় যতটা ভেবেছিলাম, শেষ পর্যন্ত তার চেয়ে বেশি GenAI ব্যবহার করে ফেলি।' },
-      { id: 'GD7', en: 'If GenAI were gone, I would find it hard to keep up with my courses.', bn: 'GenAI না থাকলে কোর্সের পড়াশোনা চালিয়ে যাওয়া আমার জন্য কঠিন হবে।' },
+      { id: 'GD7', en: 'If GenAI were no longer available, I would find it hard to keep up with my courses.', bn: 'GenAI না থাকলে কোর্সের পড়াশোনা চালিয়ে যাওয়া আমার জন্য কঠিন হবে।' },
       { id: 'GD8', en: 'I open a GenAI tool out of habit, even for easy study tasks.', bn: 'সহজ পড়াশোনার কাজেও আমি অভ্যাসবশত GenAI খুলে ফেলি।' },
     ],
   },
@@ -374,13 +376,13 @@ export const SECTIONS = [
       { id: 'AL1', en: 'I know GenAI can give answers that sound sure but are wrong.', bn: 'আমি জানি, GenAI এমন উত্তরও দিতে পারে যা শুনতে নিশ্চিত মনে হলেও আসলে ভুল।',
         help: { en: 'This is sometimes called "hallucination".', bn: 'একে কখনো কখনো "হ্যালুসিনেশন" বলা হয়।' } },
       { id: 'AL2', en: 'I have a basic idea of how GenAI makes its answers.', bn: 'GenAI কীভাবে উত্তর তৈরি করে, সে সম্পর্কে আমার মোটামুটি ধারণা আছে।',
-        help: { en: 'For example, that they predict likely text from patterns in large amounts of data, rather than looking up verified facts.', bn: 'যেমন: এগুলো যাচাই করা তথ্য খুঁজে দেয় না; বরং বিপুল পরিমাণ তথ্যের ধরন (প্যাটার্ন) থেকে সম্ভাব্য লেখা অনুমান করে তৈরি করে।' } },
+        help: { en: 'For example, knowing that GenAI predicts likely words from patterns in large amounts of data, instead of looking up checked facts.', bn: 'যেমন: এগুলো যাচাই করা তথ্য খুঁজে দেয় না; বরং বিপুল পরিমাণ তথ্যের ধরন (প্যাটার্ন) থেকে সম্ভাব্য লেখা অনুমান করে তৈরি করে।' } },
       { id: 'AL3', en: 'I can write clear instructions (prompts) to get useful answers from GenAI.', bn: 'GenAI থেকে কাজের উত্তর পেতে আমি স্পষ্ট নির্দেশনা (প্রম্পট) লিখতে পারি।',
         help: { en: 'A prompt is the question or request you type into the tool.', bn: 'প্রম্পট হলো টুলে আপনি যে প্রশ্ন বা অনুরোধ লেখেন।' } },
       { id: 'AL4', en: 'I can choose which GenAI tool is best for a task.', bn: 'কোন কাজের জন্য কোন GenAI টুল সবচেয়ে ভালো, তা আমি বেছে নিতে পারি।' },
       { id: 'AL5', en: 'After using a GenAI tool for some time, I can tell what it does well and where it makes mistakes.', bn: 'কিছুদিন ব্যবহারের পর আমি বুঝতে পারি, একটি GenAI টুল কোন কাজ ভালো পারে আর কোথায় ভুল করে।' },
       { id: 'AL6', en: 'For important work, I check GenAI’s answers with reliable sources before I use them.', bn: 'গুরুত্বপূর্ণ কাজে GenAI-এর উত্তর ব্যবহারের আগে আমি নির্ভরযোগ্য উৎসের সঙ্গে মিলিয়ে দেখি।' },
-      { id: 'AL7', en: 'I do not present work made by GenAI as completely my own.', bn: 'GenAI-এর তৈরি কাজকে আমি পুরোপুরি নিজের কাজ বলে দেখাই না।' },
+      { id: 'AL7', en: 'I make it clear when part of my work was made with GenAI.', bn: 'আমার কাজের কোনো অংশ GenAI দিয়ে তৈরি হলে আমি তা স্পষ্টভাবে জানাই।' },
       { id: 'AL8', en: 'I am careful not to share personal or private information with GenAI.', bn: 'GenAI-তে ব্যক্তিগত বা গোপন তথ্য না দেওয়ার ব্যাপারে আমি সতর্ক থাকি।' },
       { id: 'AL9', en: 'I know GenAI answers can be biased or one-sided.', bn: 'আমি জানি, GenAI-এর উত্তর পক্ষপাতদুষ্ট বা একপেশে হতে পারে।',
         help: { en: 'For example, favouring certain groups, countries or opinions.', bn: 'যেমন: নির্দিষ্ট কোনো গোষ্ঠী, দেশ বা মতের প্রতি ঝুঁকে থাকা।' } },
