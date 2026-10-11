@@ -270,3 +270,8 @@ body[data-lang="both"] .il .en + .bn::before { content: " / "; color: var(--rule
 .mx-topic { font-size: 12px; font-weight: 600; letter-spacing: .02em; color: var(--accent); margin-bottom: 2px; }
 .mx-topic .bn { font-weight: 500; }
 body[data-lang="both"] .mx-topic .il .en + .bn { color: var(--accent); }
+
+/* "Optional / ঐচ্ছিক" tag on items that may be skipped */
+.opt-tag { display: inline-block; margin-left: 8px; padding: 1px 7px; border-radius: 999px; font-size: 11px; font-weight: 500; color: var(--muted); background: var(--desk); border: 1px solid var(--rule); vertical-align: 1px; }
+.mx-topic .opt-tag:first-child { margin-left: 0; }
+.opt-tag .bn { color: var(--muted) !important; }

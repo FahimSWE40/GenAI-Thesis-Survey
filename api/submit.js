@@ -87,6 +87,7 @@ export function validate(body) {
     const id = f.q.id;
     if (f.kind === 'likert') {
       const v = a[id];
+      if (f.q.optional && (v === undefined || v === null)) { row[f.col] = null; continue; }
       if (!Number.isInteger(v) || v < 1 || v > 5) return { ok: false, error: `Missing or invalid ${id}` };
       row[f.col] = v;
     } else if (f.kind === 'single') {

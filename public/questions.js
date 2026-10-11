@@ -3,6 +3,7 @@
 // and the generators that write supabase/schema.sql, CODEBOOK.md and the
 // questionnaire documents in ../outputs.
 //
+// Version 2.6 — validation against Thesis_Data_Use_and_Expected_Outcomes.md: human-connectedness section (HC1–HC6), CT9, CO6, AL9, USE10; sensitive items optional.
 // Version 2.5 — Social Connectivity rewritten by the researcher (SC1–SC9, topic labels, new instructions and scale wording).
 // Version 2.4 — plain-language rewrite of every question, title and introduction (EN + BN).
 // Version 2.3 — Social Connectivity redefined as preference for people vs. AI
@@ -13,7 +14,7 @@
 // area removed; Bangla text revised throughout.
 // Question types: 'single' (choose one), 'multi' (choose any), 'text' (typed answer).
 
-export const FORM_VERSION = '2.5';
+export const FORM_VERSION = '2.6';
 
 const YES_NO = [
   { v: 1, en: 'Yes', bn: 'হ্যাঁ' },
@@ -208,6 +209,17 @@ export const SECTIONS = [
         { v: 3, en: 'Sometimes', bn: 'মাঝে মাঝে' },
         { v: 4, en: 'Often', bn: 'প্রায়ই' },
         { v: 5, en: 'Very often', bn: 'খুব প্রায়ই' } ] },
+      { id: 'USE10', type: 'multi', en: 'Apart from your studies, what else do you use GenAI for?', bn: 'পড়াশোনার বাইরে আপনি আর কী কী কাজে GenAI ব্যবহার করেন?', options: [
+        { v: 'info', en: 'Searching for information', bn: 'তথ্য খোঁজা' },
+        { v: 'messages', en: 'Writing messages, posts or emails', bn: 'বার্তা, পোস্ট বা ইমেইল লেখা' },
+        { v: 'entertainment', en: 'Entertainment or fun', bn: 'বিনোদন বা মজা' },
+        { v: 'advice', en: 'Personal or health advice', bn: 'ব্যক্তিগত বা স্বাস্থ্য বিষয়ক পরামর্শ' },
+        { v: 'planning', en: 'Planning daily tasks, travel or shopping', bn: 'দৈনন্দিন কাজ, ভ্রমণ বা কেনাকাটার পরিকল্পনা' },
+        { v: 'skills', en: 'Learning new skills', bn: 'নতুন দক্ষতা শেখা' },
+        { v: 'work', en: 'Work or freelancing', bn: 'চাকরি বা ফ্রিল্যান্সিং' },
+        { v: 'company', en: 'Chatting for company', bn: 'সঙ্গ পেতে কথা বলা' },
+        { v: 'none', en: 'I do not use GenAI outside my studies', bn: 'পড়াশোনার বাইরে GenAI ব্যবহার করি না' },
+        { v: 'other', en: 'Other', bn: 'অন্যান্য', other: true } ] },
     ],
   },
   {
@@ -228,6 +240,7 @@ export const SECTIONS = [
       { id: 'CT6', en: 'It is important to me to understand how other people see an issue.', bn: 'কোনো বিষয়ে অন্যরা কীভাবে ভাবে, তা বোঝা আমার কাছে গুরুত্বপূর্ণ।' },
       { id: 'CT7', en: 'I look for proof before I accept something as true.', bn: 'কোনো কিছু সত্য বলে মেনে নেওয়ার আগে আমি প্রমাণ খুঁজি।' },
       { id: 'CT8', en: 'I often look back at how I worked something out, to see if I could have done it better.', bn: 'কোনো কিছু কীভাবে ভেবে বের করেছি, তা আমি প্রায়ই আবার দেখি, আরও ভালোভাবে করা যেত কি না।' },
+      { id: 'CT9', en: 'Before reaching a conclusion, I consider more than one possible explanation.', bn: 'কোনো সিদ্ধান্তে পৌঁছানোর আগে আমি একাধিক সম্ভাব্য ব্যাখ্যা বিবেচনা করি।' },
     ],
   },
   {
@@ -247,10 +260,10 @@ export const SECTIONS = [
       { v: 5, en: 'Always a person', bn: 'সবসময় মানুষ' },
     ],
     items: [
-      { id: 'SC1', topic: { en: 'Loneliness', bn: 'একাকিত্ব' },
+      { id: 'SC1', optional: true, topic: { en: 'Loneliness', bn: 'একাকিত্ব' },
         en: 'When I feel lonely and want someone to talk to, I prefer…',
         bn: 'যখন আমার একা লাগে এবং কারও সঙ্গে কথা বলতে ইচ্ছা করে, তখন আমি কথা বলতে বেশি পছন্দ করি…' },
-      { id: 'SC2', topic: { en: 'Stress and Worries', bn: 'মানসিক চাপ ও দুশ্চিন্তা' },
+      { id: 'SC2', optional: true, topic: { en: 'Stress and Worries', bn: 'মানসিক চাপ ও দুশ্চিন্তা' },
         en: 'When I feel stressed or worried, I prefer to share my thoughts with…',
         bn: 'যখন আমি মানসিক চাপ বা দুশ্চিন্তায় থাকি, তখন আমি মনের কথা খুলে বলতে বেশি পছন্দ করি…' },
       { id: 'SC3', topic: { en: 'Sharing Good News', bn: 'ভালো খবর শেয়ার করা' },
@@ -259,10 +272,10 @@ export const SECTIONS = [
       { id: 'SC4', topic: { en: 'Personal Advice', bn: 'ব্যক্তিগত পরামর্শ' },
         en: 'When I face a personal problem and need advice, I prefer to ask…',
         bn: 'যখন আমি কোনো ব্যক্তিগত সমস্যায় পড়ি এবং পরামর্শের প্রয়োজন হয়, তখন আমি পরামর্শ নিতে বেশি পছন্দ করি…' },
-      { id: 'SC5', topic: { en: 'Expressing Feelings', bn: 'অনুভূতি প্রকাশ' },
+      { id: 'SC5', optional: true, topic: { en: 'Expressing Feelings', bn: 'অনুভূতি প্রকাশ' },
         en: 'When I want to express my thoughts and feelings openly, I feel more comfortable talking to…',
         bn: 'যখন আমি নিজের চিন্তা ও অনুভূতি খোলামেলাভাবে প্রকাশ করতে চাই, তখন আমি কথা বলতে বেশি স্বাচ্ছন্দ্য বোধ করি…' },
-      { id: 'SC6', topic: { en: 'Feeling Understood', bn: 'নিজেকে বোঝাতে পারা' },
+      { id: 'SC6', optional: true, topic: { en: 'Feeling Understood', bn: 'নিজেকে বোঝাতে পারা' },
         en: 'When I want someone to listen to me and understand my feelings, I prefer to talk to…',
         bn: 'যখন আমি চাই কেউ আমার কথা মন দিয়ে শুনুক এবং আমার অনুভূতি বুঝুক, তখন আমি কথা বলতে বেশি পছন্দ করি…' },
       { id: 'SC7', topic: { en: 'Casual Conversation', bn: 'হালকা আড্ডা' },
@@ -277,7 +290,25 @@ export const SECTIONS = [
     ],
   },
   {
-    id: 'F', kind: 'likert', short: 'se', construct: 'Self-Efficacy (DV3)',
+    // Second dimension of Social Connectivity: perceived human connectedness
+    // (closeness, contact, belonging, support, communication confidence, loneliness).
+    id: 'F', kind: 'likert', short: 'hc', construct: 'Social Connectivity (DV2): human connectedness',
+    en: 'Your Connections with People', bn: 'মানুষের সঙ্গে আপনার সম্পর্ক',
+    hint: {
+      en: 'These sentences are about your relationships with the people in your life, such as friends, family, classmates and teachers, during this semester. Questions marked optional can be skipped.',
+      bn: 'এই বাক্যগুলো এই সেমিস্টারে আপনার জীবনের মানুষদের, যেমন বন্ধু, পরিবার, সহপাঠী ও শিক্ষকদের সঙ্গে আপনার সম্পর্ক নিয়ে। "ঐচ্ছিক" লেখা প্রশ্নগুলো বাদ দিতে পারেন।',
+    },
+    items: [
+      { id: 'HC1', en: 'I feel close to the people in my life, such as friends and family.', bn: 'আমার জীবনের মানুষদের, যেমন বন্ধু ও পরিবারের সঙ্গে আমি ঘনিষ্ঠতা অনুভব করি।' },
+      { id: 'HC2', en: 'I regularly talk with my friends or family, in person or by phone.', bn: 'আমি নিয়মিত বন্ধু বা পরিবারের সঙ্গে কথা বলি, সরাসরি বা ফোনে।' },
+      { id: 'HC3', en: 'I feel that I belong among the students at my university.', bn: 'আমার বিশ্ববিদ্যালয়ের শিক্ষার্থীদের মধ্যে আমি নিজেকে তাঁদেরই একজন মনে করি।' },
+      { id: 'HC4', en: 'When I need support, I have people I can turn to.', bn: 'সহায়তার প্রয়োজন হলে আমার পাশে দাঁড়ানোর মতো মানুষ আছে।' },
+      { id: 'HC5', en: 'I feel confident communicating with other people.', bn: 'অন্য মানুষের সঙ্গে যোগাযোগ করতে আমি আত্মবিশ্বাসী বোধ করি।' },
+      { id: 'HC6', reverse: true, optional: true, en: 'I often feel lonely.', bn: 'আমি প্রায়ই একাকিত্ব বোধ করি।' },
+    ],
+  },
+  {
+    id: 'G', kind: 'likert', short: 'se', construct: 'Self-Efficacy (DV3)',
     en: 'Confidence in Yourself', bn: 'নিজের ওপর আস্থা',
     hint: {
       en: 'These sentences are about how sure you feel about your own abilities when you work by yourself, without help from people or tools.',
@@ -296,7 +327,7 @@ export const SECTIONS = [
     ],
   },
   {
-    id: 'G', kind: 'likert', short: 'gd', construct: 'GenAI Dependence (IV)',
+    id: 'H', kind: 'likert', short: 'gd', construct: 'GenAI Dependence (IV)',
     en: 'Depending on GenAI', bn: 'GenAI-এর ওপর নির্ভরতা',
     hint: {
       en: 'These sentences are about how much you depend on GenAI for your studies, thinking about the last 6 months.',
@@ -316,9 +347,8 @@ export const SECTIONS = [
     ],
   },
   {
-    // Optional construct — delete this block (then `npm run generate`) if
-    // Cognitive Offloading is dropped from the model.
-    id: 'H', kind: 'likert', short: 'co', construct: 'Cognitive Offloading (optional mediator)',
+    // Mediator: GenAI Dependence → Cognitive Offloading → outcomes (Thesis_Data_Use_and_Expected_Outcomes.md).
+    id: 'I', kind: 'likert', short: 'co', construct: 'Cognitive Offloading (mediator)',
     en: 'Letting GenAI Think for You', bn: 'GenAI-কে দিয়ে ভাবানো',
     hint: {
       en: 'These sentences are about thinking work that you let GenAI do instead of doing it yourself.',
@@ -330,10 +360,11 @@ export const SECTIONS = [
       { id: 'CO3', en: 'I read GenAI’s summaries instead of reading the full course material.', bn: 'পুরো কোর্স ম্যাটেরিয়াল না পড়ে আমি GenAI-এর তৈরি সারসংক্ষেপ পড়ি।' },
       { id: 'CO4', en: 'I hand in text or code written by GenAI with only small changes.', bn: 'GenAI-এর লেখা টেক্সট বা কোড সামান্য বদলে আমি জমা দিই।' },
       { id: 'CO5', en: 'I let GenAI check my work instead of checking it myself.', bn: 'নিজের কাজ নিজে না দেখে আমি GenAI-কে দিয়ে যাচাই করাই।' },
+      { id: 'CO6', en: 'I let GenAI come up with the arguments or ideas for my work instead of thinking of them myself.', bn: 'নিজে না ভেবে আমি আমার কাজের যুক্তি বা আইডিয়াগুলো GenAI-কে দিয়ে তৈরি করিয়ে নিই।' },
     ],
   },
   {
-    id: 'I', kind: 'likert', short: 'al', construct: 'AI Literacy (moderator)',
+    id: 'J', kind: 'likert', short: 'al', construct: 'AI Literacy (moderator)',
     en: 'What You Know About GenAI', bn: 'GenAI সম্পর্কে আপনার জ্ঞান',
     hint: {
       en: 'These sentences are about what you know about GenAI, and how well and how carefully you use it.',
@@ -351,6 +382,8 @@ export const SECTIONS = [
       { id: 'AL6', en: 'For important work, I check GenAI’s answers with reliable sources before I use them.', bn: 'গুরুত্বপূর্ণ কাজে GenAI-এর উত্তর ব্যবহারের আগে আমি নির্ভরযোগ্য উৎসের সঙ্গে মিলিয়ে দেখি।' },
       { id: 'AL7', en: 'I do not present work made by GenAI as completely my own.', bn: 'GenAI-এর তৈরি কাজকে আমি পুরোপুরি নিজের কাজ বলে দেখাই না।' },
       { id: 'AL8', en: 'I am careful not to share personal or private information with GenAI.', bn: 'GenAI-তে ব্যক্তিগত বা গোপন তথ্য না দেওয়ার ব্যাপারে আমি সতর্ক থাকি।' },
+      { id: 'AL9', en: 'I know GenAI answers can be biased or one-sided.', bn: 'আমি জানি, GenAI-এর উত্তর পক্ষপাতদুষ্ট বা একপেশে হতে পারে।',
+        help: { en: 'For example, favouring certain groups, countries or opinions.', bn: 'যেমন: নির্দিষ্ট কোনো গোষ্ঠী, দেশ বা মতের প্রতি ঝুঁকে থাকা।' } },
     ],
   },
 ];

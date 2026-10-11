@@ -1,4 +1,4 @@
-# Codebook — GenAI Dependence Survey (form version 2.5)
+# Codebook — GenAI Dependence Survey (form version 2.6)
 
 *Generated from `public/questions.js` by `npm run generate`. Column names are the lower-case item codes.*
 
@@ -64,6 +64,8 @@ Only participants who answer **Yes** to all three are allowed to continue; nothi
 | use7 | Do you pay for a GenAI tool (for example, ChatGPT Plus)? | 1 = Yes; 2 = No |
 | use8 | Has your university or a teacher taught you, or given you rules, about using AI in your studies? | 1 = Yes; 2 = No; 3 = Not sure |
 | use9 | Apart from studies, how often in the last 6 months did you chat with an AI for company or emotional support? | 1 = Never; 2 = Rarely; 3 = Sometimes; 4 = Often; 5 = Very often |
+| use10 | Apart from your studies, what else do you use GenAI for? | Multi-select (text array). In `responses_spss`: use10_info, use10_messages, use10_entertainment, use10_advice, use10_planning, use10_skills, use10_work, use10_company, use10_none, use10_other_selected (0/1) |
+| use10_other | "Other" text for USE10 | Free text (≤ 200 chars) |
 
 ## Section D: How You Think — Critical Thinking (DV1)
 
@@ -80,6 +82,7 @@ Scale: 1 = Strongly Disagree, 2 = Disagree, 3 = Neutral, 4 = Agree, 5 = Strongly
 | ct6 | It is important to me to understand how other people see an issue. |  |
 | ct7 | I look for proof before I accept something as true. |  |
 | ct8 | I often look back at how I worked something out, to see if I could have done it better. |  |
+| ct9 | Before reaching a conclusion, I consider more than one possible explanation. |  |
 
 ## Section E: People or AI? — Social Connectivity (DV2)
 
@@ -97,7 +100,20 @@ Scale: 1 = Always an AI chatbot, 2 = Mostly an AI chatbot, 3 = Both equally, 4 =
 | sc8 | When I want company during my free time, I prefer to spend time with… |  |
 | sc9 | When I need help or assistance with a task, I prefer to seek help from… |  |
 
-## Section F: Confidence in Yourself — Self-Efficacy (DV3)
+## Section F: Your Connections with People — Social Connectivity (DV2): human connectedness
+
+Scale: 1 = Strongly Disagree, 2 = Disagree, 3 = Neutral, 4 = Agree, 5 = Strongly Agree
+
+| Column | Item | Note |
+|---|---|---|
+| hc1 | I feel close to the people in my life, such as friends and family. |  |
+| hc2 | I regularly talk with my friends or family, in person or by phone. |  |
+| hc3 | I feel that I belong among the students at my university. |  |
+| hc4 | When I need support, I have people I can turn to. |  |
+| hc5 | I feel confident communicating with other people. |  |
+| hc6 | I often feel lonely. | Reverse-coded → use hc6_r |
+
+## Section G: Confidence in Yourself — Self-Efficacy (DV3)
 
 Scale: 1 = Strongly Disagree, 2 = Disagree, 3 = Neutral, 4 = Agree, 5 = Strongly Agree
 
@@ -113,7 +129,7 @@ Scale: 1 = Strongly Disagree, 2 = Disagree, 3 = Neutral, 4 = Agree, 5 = Strongly
 | gse3 | I can stay calm in hard times because I trust my ability to handle them. |  |
 | gse4 | When I have a problem, I can usually think of more than one way to solve it. |  |
 
-## Section G: Depending on GenAI — GenAI Dependence (IV)
+## Section H: Depending on GenAI — GenAI Dependence (IV)
 
 Scale: 1 = Strongly Disagree, 2 = Disagree, 3 = Neutral, 4 = Agree, 5 = Strongly Agree
 
@@ -128,7 +144,7 @@ Scale: 1 = Strongly Disagree, 2 = Disagree, 3 = Neutral, 4 = Agree, 5 = Strongly
 | gd7 | If GenAI were gone, I would find it hard to keep up with my courses. |  |
 | gd8 | I open a GenAI tool out of habit, even for easy study tasks. |  |
 
-## Section H: Letting GenAI Think for You — Cognitive Offloading (optional mediator)
+## Section I: Letting GenAI Think for You — Cognitive Offloading (mediator)
 
 Scale: 1 = Strongly Disagree, 2 = Disagree, 3 = Neutral, 4 = Agree, 5 = Strongly Agree
 
@@ -139,8 +155,9 @@ Scale: 1 = Strongly Disagree, 2 = Disagree, 3 = Neutral, 4 = Agree, 5 = Strongly
 | co3 | I read GenAI’s summaries instead of reading the full course material. |  |
 | co4 | I hand in text or code written by GenAI with only small changes. |  |
 | co5 | I let GenAI check my work instead of checking it myself. |  |
+| co6 | I let GenAI come up with the arguments or ideas for my work instead of thinking of them myself. |  |
 
-## Section I: What You Know About GenAI — AI Literacy (moderator)
+## Section J: What You Know About GenAI — AI Literacy (moderator)
 
 Scale: 1 = Strongly Disagree, 2 = Disagree, 3 = Neutral, 4 = Agree, 5 = Strongly Agree
 
@@ -154,14 +171,16 @@ Scale: 1 = Strongly Disagree, 2 = Disagree, 3 = Neutral, 4 = Agree, 5 = Strongly
 | al6 | For important work, I check GenAI’s answers with reliable sources before I use them. |  |
 | al7 | I do not present work made by GenAI as completely my own. |  |
 | al8 | I am careful not to share personal or private information with GenAI. |  |
+| al9 | I know GenAI answers can be biased or one-sided. |  |
 
 ## Construct mean scores (in `responses_spss`)
 
-- **ct_mean** — Critical Thinking (DV1): mean of CT1, CT2, CT3, CT4, CT5, CT6, CT7, CT8
+- **ct_mean** — Critical Thinking (DV1): mean of CT1, CT2, CT3, CT4, CT5, CT6, CT7, CT8, CT9
 - **sc_mean** — Social Connectivity (DV2): mean of SC1, SC2, SC3, SC4, SC5, SC6, SC7, SC8, SC9
+- **hc_mean** — Social Connectivity (DV2): human connectedness: mean of HC1, HC2, HC3, HC4, HC5, HC6 (reversed)
 - **se_mean** — Self-Efficacy (DV3): mean of ASE1, ASE2, ASE3, ASE4, GSE1, GSE2, GSE3, GSE4
 - **gd_mean** — GenAI Dependence (IV): mean of GD1, GD2, GD3, GD4, GD5, GD6, GD7, GD8
-- **co_mean** — Cognitive Offloading (optional mediator): mean of CO1, CO2, CO3, CO4, CO5
-- **al_mean** — AI Literacy (moderator): mean of AL1, AL2, AL3, AL4, AL5, AL6, AL7, AL8
+- **co_mean** — Cognitive Offloading (mediator): mean of CO1, CO2, CO3, CO4, CO5, CO6
+- **al_mean** — AI Literacy (moderator): mean of AL1, AL2, AL3, AL4, AL5, AL6, AL7, AL8, AL9
 
 > Use the item-level columns (not the means) as indicators in SmartPLS.

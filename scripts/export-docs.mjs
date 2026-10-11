@@ -23,6 +23,7 @@ const TITLE = {
 const SOURCES = {
   ct: 'Sosu (2013) Critical Thinking Disposition Scale',
   sc: 'Self-developed bipolar items (people vs. AI companion), informed by Malfacini (2025) and Jiao et al. (2026) — validate with expert review, pilot and factor analysis',
+  hc: 'Adapted from Lee, Draper & Lee (2001) Social Connectedness Scale-Revised and Hughes et al. (2004) 3-item UCLA Loneliness Scale (HC6 reverse-coded)',
   se: 'Midgley et al. (2000) PALS academic efficacy (ASE); Schwarzer & Jerusalem (1995) General Self-Efficacy Scale (GSE)',
   gd: 'Morales-García et al. (2024) AI dependence scale; Liu (2026); Hou et al. (2025) reliance behaviour',
   co: 'Gerlich (2025) cognitive offloading; Mir et al. (2026)',
@@ -63,7 +64,8 @@ function build(bi) {
       md += `| Code | Statement${bi ? ' · বিবৃতি' : ''} | 1 | 2 | 3 | 4 | 5 |\n|:-:|---|:-:|:-:|:-:|:-:|:-:|\n`;
       for (const it of s.items) {
         const extra = it.help ? `<br>*${Lin(it.help)}*` : '';
-        const topic = it.topic ? `**${Lin(it.topic)}**<br>` : '';
+        const optTag = it.optional ? ` *(${bi ? 'optional · ঐচ্ছিক' : 'optional'})*` : '';
+        const topic = it.topic || it.optional ? `${it.topic ? `**${Lin(it.topic)}**` : ''}${optTag}<br>` : '';
         md += `| ${it.id} | ${topic}${L(it)}${extra} | ○ | ○ | ○ | ○ | ○ |\n`;
       }
       md += '\n';

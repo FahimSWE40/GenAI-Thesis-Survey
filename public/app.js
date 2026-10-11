@@ -93,7 +93,7 @@ function matrix(s) {
   const rows = s.items.map(it => {
     const val = state.answers[it.id];
     return `<div class="mx-row${wide}" id="q-${it.id}" role="radiogroup" aria-label="${esc(it.en)}">
-      <div class="mx-stmt"><span class="q-code">${it.attention ? '' : it.id}</span><div>${it.topic ? `<div class="mx-topic">${ti(it.topic)}</div>` : ''}${t(it)}${help(it)}</div></div>
+      <div class="mx-stmt"><span class="q-code">${it.attention ? '' : it.id}</span><div>${it.topic || it.optional ? `<div class="mx-topic">${it.topic ? ti(it.topic) : ''}${it.optional ? `<span class="opt-tag">${ti({ en: 'Optional', bn: 'ঐচ্ছিক' })}</span>` : ''}</div>` : ''}${t(it)}${help(it)}</div></div>
       <div class="mx-ends" aria-hidden="true"><span>${ti(SCALE[0])}</span><span>${ti(SCALE[SCALE.length - 1])}</span></div>
       ${SCALE.map(l => `<label class="mx-cell"><input type="radio" name="${it.id}" value="${l.v}" ${val === l.v ? 'checked' : ''} aria-label="${l.v} ${esc(l.en)}"><span class="dot"><span class="dot-n">${l.v}</span></span></label>`).join('')}
     </div>`;

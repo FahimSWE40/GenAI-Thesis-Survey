@@ -94,6 +94,15 @@ assert.equal(validate(body(a)).ok, false);
   assert.equal(await verifyBot(undefined, ''), 'not_configured');
 }
 
+// 12. optional rating items (sensitive SC items, loneliness) may be skipped; required ones may not
+a = fullAnswers(); delete a.SC1; delete a.HC6;
+r = validate(body(a));
+assert.equal(r.ok, true, r.error);
+assert.equal(r.row.sc1, null);
+assert.equal(r.row.hc6, null);
+a = fullAnswers(); delete a.HC1;
+assert.equal(validate(body(a)).ok, false);
+
 console.log('All validator tests passed.');
 
 // Pre-launch reminder (does not fail the tests)

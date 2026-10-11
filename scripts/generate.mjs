@@ -15,8 +15,8 @@ const comments = [];
 for (const f of FIELDS) {
   const label = `${f.q.id}: ${f.kind === 'likert' ? f.q.en : f.q.en}`;
   if (f.kind === 'likert') {
-    cols.push(`  ${f.col} smallint not null check (${f.col} between 1 and 5)`);
-    comments.push(`comment on column public.responses.${f.col} is ${sqlStr(label + (f.q.reverse ? ' [REVERSE-CODED]' : '') + (f.q.attention ? ` [ATTENTION CHECK: correct = ${f.q.attention}]` : ''))};`);
+    cols.push(`  ${f.col} smallint${f.q.optional ? '' : ' not null'} check (${f.col} between 1 and 5)`);
+    comments.push(`comment on column public.responses.${f.col} is ${sqlStr(label + (f.q.reverse ? ' [REVERSE-CODED]' : '') + (f.q.attention ? ` [ATTENTION CHECK: correct = ${f.q.attention}]` : '') + (f.q.optional ? ' [OPTIONAL: blank = skipped]' : ''))};`);
   } else if (f.kind === 'single') {
     const vs = f.q.options.map(o => o.v);
     cols.push(`  ${f.col} smallint${f.q.optional ? '' : ' not null'} check (${f.col} between ${Math.min(...vs)} and ${Math.max(...vs)})`);
@@ -47,7 +47,8 @@ for (const f of FIELDS) {
 for (const s of likertSections) {
   const its = s.items.filter(i => !i.attention);
   const terms = its.map(i => (i.reverse ? `(6 - ${i.id.toLowerCase()})` : i.id.toLowerCase()));
-  viewCols.push(`round((${terms.join(' + ')})::numeric / ${its.length}, 3) as ${s.short}_mean`);
+  // Mean of the answered items (optional items may be blank, so a plain sum would turn the whole mean empty)
+  viewCols.push(`round((select avg(x) from unnest(array[${terms.join(', ')}]) as x)::numeric, 3) as ${s.short}_mean`);
 }
 
 const schema = `-- GenAI Dependence survey — Supabase schema (form version ${FORM_VERSION})
