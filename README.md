@@ -5,6 +5,8 @@ A bilingual (English / বাংলা) online questionnaire for the undergradua
 > **Effects of GenAI Dependence on Critical Thinking, Social Connectivity, and Self-Efficacy among Bangladeshi University Students**
 >
 > Fahim Bin Forhad · Supervisor: Dr. Md. Abdul Kader, Associate Professor · Department of Software Engineering, Daffodil International University
+>
+> Contact: forhad2305341389@diu.edu.bd
 
 **Live form:** https://gen-ai-survey.vercel.app
 
