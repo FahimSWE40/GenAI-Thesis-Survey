@@ -124,6 +124,7 @@ insert into withdrawals (receipt_code, note) values ('GA-5YF4-PZMA', 'participan
 | `api/submit.js` | Serverless function: validation, IP hashing, device type, bot check, receipt code, insert, clear error messages |
 | `api/health.js` | Deployment status page (`/api/health`): settings present + database reachable |
 | `supabase/schema.sql` | Tables, append-only trigger, withdrawals table and analysis view — *generated* |
+| `supabase/upgrade_to_v2_8.sql` | Brings a database created before v2.8 up to the current rules (applied to the live project on 2026-10-12) |
 | `CODEBOOK.md` | Every column and value code — *generated* |
 | `scripts/generate.mjs` | Regenerates `schema.sql` and `CODEBOOK.md` from `questions.js` |
 | `scripts/export-docs.mjs` | Writes the questionnaire documents for the thesis folder (skipped outside it) |
