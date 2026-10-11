@@ -77,7 +77,8 @@ ${cols.join(',\n')}
 -- RLS on + no policies = the public anon key has no access at all.
 alter table public.responses enable row level security;
 revoke all on public.responses from anon, authenticated;
-grant select, insert on public.responses to service_role;   -- the form's server (newer projects do not grant this automatically)
+revoke all on public.responses from service_role;
+grant select, insert on public.responses to service_role;   -- the form's server may only add rows (and read for the health check)
 
 -- Append-only: once saved, a response can never be edited or deleted (not even by the researcher).
 -- Removing this protection would require a new migration, which Supabase records in its history.
@@ -103,7 +104,7 @@ create table if not exists public.withdrawals (
 );
 alter table public.withdrawals enable row level security;
 revoke all on public.withdrawals from anon, authenticated;
-grant select, insert on public.withdrawals to service_role;
+revoke all on public.withdrawals from service_role;   -- researcher-only (SQL Editor); the server never needs it
 
 ${comments.join('\n')}
 
@@ -116,7 +117,7 @@ select
 from public.responses;
 
 revoke all on public.responses_spss from anon, authenticated;
-grant select on public.responses_spss to service_role;
+revoke all on public.responses_spss from service_role;   -- export in the SQL Editor; not exposed to the server
 notify pgrst, 'reload schema';   -- let the API see the new tables immediately
 `;
 mkdirSync(join(root, 'supabase'), { recursive: true });
