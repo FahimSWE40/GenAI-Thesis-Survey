@@ -265,3 +265,8 @@ body[data-lang="both"] .il .en + .bn::before { content: " / "; color: var(--rule
   .opts.short { grid-template-columns: 1fr; }
   .dot { width: 36px; height: 36px; }
 }
+
+/* short topic label above a rating statement (e.g. "Loneliness / একাকিত্ব") */
+.mx-topic { font-size: 12px; font-weight: 600; letter-spacing: .02em; color: var(--accent); margin-bottom: 2px; }
+.mx-topic .bn { font-weight: 500; }
+body[data-lang="both"] .mx-topic .il .en + .bn { color: var(--accent); }

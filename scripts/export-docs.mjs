@@ -63,7 +63,8 @@ function build(bi) {
       md += `| Code | Statement${bi ? ' · বিবৃতি' : ''} | 1 | 2 | 3 | 4 | 5 |\n|:-:|---|:-:|:-:|:-:|:-:|:-:|\n`;
       for (const it of s.items) {
         const extra = it.help ? `<br>*${Lin(it.help)}*` : '';
-        md += `| ${it.id} | ${L(it)}${extra} | ○ | ○ | ○ | ○ | ○ |\n`;
+        const topic = it.topic ? `**${Lin(it.topic)}**<br>` : '';
+        md += `| ${it.id} | ${topic}${L(it)}${extra} | ○ | ○ | ○ | ○ | ○ |\n`;
       }
       md += '\n';
     } else {

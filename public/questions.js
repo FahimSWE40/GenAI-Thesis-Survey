@@ -3,6 +3,7 @@
 // and the generators that write supabase/schema.sql, CODEBOOK.md and the
 // questionnaire documents in ../outputs.
 //
+// Version 2.5 — Social Connectivity rewritten by the researcher (SC1–SC9, topic labels, new instructions and scale wording).
 // Version 2.4 — plain-language rewrite of every question, title and introduction (EN + BN).
 // Version 2.3 — Social Connectivity redefined as preference for people vs. AI
 // companions (bipolar scale, SC1–SC8); USE9 AI-companion use added.
@@ -12,7 +13,7 @@
 // area removed; Bangla text revised throughout.
 // Question types: 'single' (choose one), 'multi' (choose any), 'text' (typed answer).
 
-export const FORM_VERSION = '2.4';
+export const FORM_VERSION = '2.5';
 
 const YES_NO = [
   { v: 1, en: 'Yes', bn: 'হ্যাঁ' },
@@ -235,25 +236,44 @@ export const SECTIONS = [
     id: 'E', kind: 'likert', short: 'sc', construct: 'Social Connectivity (DV2)',
     en: 'People or AI?', bn: 'মানুষ নাকি এআই?',
     hint: {
-      en: 'For each situation, choose who you would rather turn to: a person (a friend, family member, classmate, senior or teacher) or an AI chatbot (like ChatGPT, Meta AI, Snapchat My AI, Character.AI or Replika). Even if you have never talked to an AI this way, answer with what you would prefer.',
-      bn: 'প্রতিটি পরিস্থিতিতে আপনি কার কাছে যেতে চান, তা বেছে নিন: একজন মানুষ (বন্ধু, পরিবারের কেউ, সহপাঠী, সিনিয়র বা শিক্ষক) নাকি একটি এআই চ্যাটবট (যেমন ChatGPT, Meta AI, Snapchat My AI, Character.AI বা Replika)। আগে কখনো এআই-এর সঙ্গে এভাবে কথা না বললেও, আপনি যা পছন্দ করতেন সেটিই বেছে নিন।',
+      en: 'For each situation below, choose who you prefer to turn to: a person (such as a friend, family member, classmate, senior, or teacher) or an AI chatbot (such as ChatGPT, Meta AI, Snapchat My AI, Character.AI, or Replika). Please answer based on your personal preferences and experiences. Even if you have never used an AI chatbot in a particular situation, select the option that best reflects your preference.',
+      bn: 'নিচের প্রতিটি পরিস্থিতিতে আপনি কার কাছে যেতে বেশি পছন্দ করেন, তা নির্বাচন করুন: একজন মানুষ (যেমন বন্ধু, পরিবারের সদস্য, সহপাঠী, সিনিয়র বা শিক্ষক), নাকি একটি এআই চ্যাটবট (যেমন ChatGPT, Meta AI, Snapchat My AI, Character.AI বা Replika)। আপনার ব্যক্তিগত পছন্দ ও অভিজ্ঞতার ভিত্তিতে উত্তর দিন। কোনো পরিস্থিতিতে আগে কখনো এআই চ্যাটবট ব্যবহার না করলেও, আপনার পছন্দ অনুযায়ী সবচেয়ে উপযুক্ত উত্তরটি নির্বাচন করুন।',
     },
     scale: [
       { v: 1, en: 'Always an AI chatbot', bn: 'সবসময় এআই চ্যাটবট' },
-      { v: 2, en: 'Mostly AI', bn: 'বেশিরভাগ সময় এআই' },
-      { v: 3, en: 'Both equally', bn: 'দুটোই সমান' },
+      { v: 2, en: 'Mostly an AI chatbot', bn: 'বেশিরভাগ সময় এআই চ্যাটবট' },
+      { v: 3, en: 'Both equally', bn: 'মানুষ ও এআই, দুটোই সমানভাবে' },
       { v: 4, en: 'Mostly a person', bn: 'বেশিরভাগ সময় মানুষ' },
       { v: 5, en: 'Always a person', bn: 'সবসময় মানুষ' },
     ],
     items: [
-      { id: 'SC1', en: 'When I feel lonely, I would rather talk to…', bn: 'একা লাগলে আমি কথা বলতে চাই…' },
-      { id: 'SC2', en: 'When I am stressed or worried, I would rather open up to…', bn: 'চাপে বা দুশ্চিন্তায় থাকলে আমি মনের কথা বলতে চাই…' },
-      { id: 'SC3', en: 'When I have good news, I would rather share it with…', bn: 'ভালো খবর থাকলে আমি তা জানাতে চাই…' },
-      { id: 'SC4', en: 'When I need advice about a personal problem, I would rather ask…', bn: 'ব্যক্তিগত সমস্যায় পরামর্শ লাগলে আমি জিজ্ঞেস করতে চাই…' },
-      { id: 'SC5', en: 'When I want to talk about my feelings, I feel more comfortable with…', bn: 'নিজের অনুভূতির কথা বলতে আমি বেশি স্বচ্ছন্দ বোধ করি…' },
-      { id: 'SC6', en: 'When I want someone who truly understands me, I go to…', bn: 'যখন এমন কাউকে চাই যে আমাকে সত্যিই বোঝে, তখন আমি যাই…' },
-      { id: 'SC7', en: 'When I want a light chat to pass the time, I would rather chat with…', bn: 'সময় কাটাতে হালকা গল্প করতে চাইলে আমি কথা বলতে চাই…' },
-      { id: 'SC8', en: 'When I want company in my free time, I would rather turn to…', bn: 'অবসরে সঙ্গ চাইলে আমি যাই…' },
+      { id: 'SC1', topic: { en: 'Loneliness', bn: 'একাকিত্ব' },
+        en: 'When I feel lonely and want someone to talk to, I prefer…',
+        bn: 'যখন আমার একা লাগে এবং কারও সঙ্গে কথা বলতে ইচ্ছা করে, তখন আমি কথা বলতে বেশি পছন্দ করি…' },
+      { id: 'SC2', topic: { en: 'Stress and Worries', bn: 'মানসিক চাপ ও দুশ্চিন্তা' },
+        en: 'When I feel stressed or worried, I prefer to share my thoughts with…',
+        bn: 'যখন আমি মানসিক চাপ বা দুশ্চিন্তায় থাকি, তখন আমি মনের কথা খুলে বলতে বেশি পছন্দ করি…' },
+      { id: 'SC3', topic: { en: 'Sharing Good News', bn: 'ভালো খবর শেয়ার করা' },
+        en: 'When something good happens in my life, I prefer to share the news with…',
+        bn: 'যখন আমার জীবনে ভালো কিছু ঘটে, তখন আমি সেই সুখবর শেয়ার করতে বেশি পছন্দ করি…' },
+      { id: 'SC4', topic: { en: 'Personal Advice', bn: 'ব্যক্তিগত পরামর্শ' },
+        en: 'When I face a personal problem and need advice, I prefer to ask…',
+        bn: 'যখন আমি কোনো ব্যক্তিগত সমস্যায় পড়ি এবং পরামর্শের প্রয়োজন হয়, তখন আমি পরামর্শ নিতে বেশি পছন্দ করি…' },
+      { id: 'SC5', topic: { en: 'Expressing Feelings', bn: 'অনুভূতি প্রকাশ' },
+        en: 'When I want to express my thoughts and feelings openly, I feel more comfortable talking to…',
+        bn: 'যখন আমি নিজের চিন্তা ও অনুভূতি খোলামেলাভাবে প্রকাশ করতে চাই, তখন আমি কথা বলতে বেশি স্বাচ্ছন্দ্য বোধ করি…' },
+      { id: 'SC6', topic: { en: 'Feeling Understood', bn: 'নিজেকে বোঝাতে পারা' },
+        en: 'When I want someone to listen to me and understand my feelings, I prefer to talk to…',
+        bn: 'যখন আমি চাই কেউ আমার কথা মন দিয়ে শুনুক এবং আমার অনুভূতি বুঝুক, তখন আমি কথা বলতে বেশি পছন্দ করি…' },
+      { id: 'SC7', topic: { en: 'Casual Conversation', bn: 'হালকা আড্ডা' },
+        en: 'When I want to have a casual conversation to pass the time, I prefer to chat with…',
+        bn: 'যখন আমি সময় কাটানোর জন্য হালকা আড্ডা দিতে চাই, তখন আমি গল্প করতে বেশি পছন্দ করি…' },
+      { id: 'SC8', topic: { en: 'Free-Time Companionship', bn: 'অবসর সময়ে সঙ্গ' },
+        en: 'When I want company during my free time, I prefer to spend time with…',
+        bn: 'যখন আমি অবসর সময়ে কারও সঙ্গ চাই, তখন আমি সময় কাটাতে বেশি পছন্দ করি…' },
+      { id: 'SC9', topic: { en: 'Seeking Help with Tasks', bn: 'কাজে সহযোগিতা নেওয়া' },
+        en: 'When I need help or assistance with a task, I prefer to seek help from…',
+        bn: 'যখন কোনো কাজ করতে সাহায্য বা সহযোগিতার প্রয়োজন হয়, তখন আমি সাহায্য নিতে বেশি পছন্দ করি…' },
     ],
   },
   {

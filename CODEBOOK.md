@@ -1,4 +1,4 @@
-# Codebook — GenAI Dependence Survey (form version 2.4)
+# Codebook — GenAI Dependence Survey (form version 2.5)
 
 *Generated from `public/questions.js` by `npm run generate`. Column names are the lower-case item codes.*
 
@@ -83,18 +83,19 @@ Scale: 1 = Strongly Disagree, 2 = Disagree, 3 = Neutral, 4 = Agree, 5 = Strongly
 
 ## Section E: People or AI? — Social Connectivity (DV2)
 
-Scale: 1 = Always an AI chatbot, 2 = Mostly AI, 3 = Both equally, 4 = Mostly a person, 5 = Always a person (higher = more human-oriented)
+Scale: 1 = Always an AI chatbot, 2 = Mostly an AI chatbot, 3 = Both equally, 4 = Mostly a person, 5 = Always a person (higher = more human-oriented)
 
 | Column | Item | Note |
 |---|---|---|
-| sc1 | When I feel lonely, I would rather talk to… |  |
-| sc2 | When I am stressed or worried, I would rather open up to… |  |
-| sc3 | When I have good news, I would rather share it with… |  |
-| sc4 | When I need advice about a personal problem, I would rather ask… |  |
-| sc5 | When I want to talk about my feelings, I feel more comfortable with… |  |
-| sc6 | When I want someone who truly understands me, I go to… |  |
-| sc7 | When I want a light chat to pass the time, I would rather chat with… |  |
-| sc8 | When I want company in my free time, I would rather turn to… |  |
+| sc1 | When I feel lonely and want someone to talk to, I prefer… |  |
+| sc2 | When I feel stressed or worried, I prefer to share my thoughts with… |  |
+| sc3 | When something good happens in my life, I prefer to share the news with… |  |
+| sc4 | When I face a personal problem and need advice, I prefer to ask… |  |
+| sc5 | When I want to express my thoughts and feelings openly, I feel more comfortable talking to… |  |
+| sc6 | When I want someone to listen to me and understand my feelings, I prefer to talk to… |  |
+| sc7 | When I want to have a casual conversation to pass the time, I prefer to chat with… |  |
+| sc8 | When I want company during my free time, I prefer to spend time with… |  |
+| sc9 | When I need help or assistance with a task, I prefer to seek help from… |  |
 
 ## Section F: Confidence in Yourself — Self-Efficacy (DV3)
 
@@ -157,7 +158,7 @@ Scale: 1 = Strongly Disagree, 2 = Disagree, 3 = Neutral, 4 = Agree, 5 = Strongly
 ## Construct mean scores (in `responses_spss`)
 
 - **ct_mean** — Critical Thinking (DV1): mean of CT1, CT2, CT3, CT4, CT5, CT6, CT7, CT8
-- **sc_mean** — Social Connectivity (DV2): mean of SC1, SC2, SC3, SC4, SC5, SC6, SC7, SC8
+- **sc_mean** — Social Connectivity (DV2): mean of SC1, SC2, SC3, SC4, SC5, SC6, SC7, SC8, SC9
 - **se_mean** — Self-Efficacy (DV3): mean of ASE1, ASE2, ASE3, ASE4, GSE1, GSE2, GSE3, GSE4
 - **gd_mean** — GenAI Dependence (IV): mean of GD1, GD2, GD3, GD4, GD5, GD6, GD7, GD8
 - **co_mean** — Cognitive Offloading (optional mediator): mean of CO1, CO2, CO3, CO4, CO5
