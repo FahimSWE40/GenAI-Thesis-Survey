@@ -3,6 +3,7 @@
 // and the generators that write supabase/schema.sql, CODEBOOK.md and the
 // questionnaire documents in ../outputs.
 //
+// Version 2.8 — removed duplicates/unneeded items: CT7 (≈CT1), GD7 (≈GD2), USE7 (paid use, not in the thesis plan), USE10 'company' option (covered by USE9). Codes of remaining items unchanged.
 // Version 2.7 — wording quality pass (12 fixes: grammar, consistency, single-idea items, positive wording, clearer Bangla); codes and values unchanged.
 // Version 2.6 — validation against Thesis_Data_Use_and_Expected_Outcomes.md: human-connectedness section (HC1–HC6), CT9, CO6, AL9, USE10; sensitive items optional.
 // Version 2.5 — Social Connectivity rewritten by the researcher (SC1–SC9, topic labels, new instructions and scale wording).
@@ -15,7 +16,7 @@
 // area removed; Bangla text revised throughout.
 // Question types: 'single' (choose one), 'multi' (choose any), 'text' (typed answer).
 
-export const FORM_VERSION = '2.7';
+export const FORM_VERSION = '2.8';
 
 const YES_NO = [
   { v: 1, en: 'Yes', bn: 'হ্যাঁ' },
@@ -198,7 +199,6 @@ export const SECTIONS = [
         { v: 2, en: 'Change it a little, then use it', bn: 'একটু বদলে ব্যবহার করি' },
         { v: 3, en: 'Use it as a start, then rewrite it in my own words', bn: 'শুরু হিসেবে নিই, তারপর নিজের ভাষায় নতুন করে লিখি' },
         { v: 4, en: 'Only use it to check or improve my own work', bn: 'শুধু নিজের কাজ যাচাই বা আরও ভালো করতে ব্যবহার করি' } ] },
-      { id: 'USE7', type: 'single', en: 'Do you pay for a GenAI tool (for example, ChatGPT Plus)?', bn: 'আপনি কি কোনো GenAI টুলের জন্য টাকা দেন (যেমন ChatGPT Plus)?', options: YES_NO },
       { id: 'USE8', type: 'single', en: 'Have you received any training or guidelines on using AI in your studies from your university or teachers?', bn: 'পড়াশোনায় এআই ব্যবহার নিয়ে আপনি কি আপনার বিশ্ববিদ্যালয় বা শিক্ষকদের কাছ থেকে কোনো প্রশিক্ষণ বা নির্দেশনা পেয়েছেন?', options: [
         { v: 1, en: 'Yes', bn: 'হ্যাঁ' },
         { v: 2, en: 'No', bn: 'না' },
@@ -219,7 +219,6 @@ export const SECTIONS = [
         { v: 'planning', en: 'Planning daily tasks, travel or shopping', bn: 'দৈনন্দিন কাজ, ভ্রমণ বা কেনাকাটার পরিকল্পনা' },
         { v: 'skills', en: 'Learning new skills', bn: 'নতুন দক্ষতা শেখা' },
         { v: 'work', en: 'Work or freelancing', bn: 'চাকরি বা ফ্রিল্যান্সিং' },
-        { v: 'company', en: 'Chatting for company', bn: 'সঙ্গ পেতে কথা বলা' },
         { v: 'none', en: 'I do not use GenAI outside my studies', bn: 'পড়াশোনার বাইরে GenAI ব্যবহার করি না' },
         { v: 'other', en: 'Other', bn: 'অন্যান্য', other: true } ] },
     ],
@@ -240,7 +239,6 @@ export const SECTIONS = [
       { id: 'ATT', attention: 4, en: 'To show you are reading carefully, please choose "Agree" (4) here.', bn: 'আপনি মনোযোগ দিয়ে পড়ছেন কি না দেখতে, এখানে "একমত" (৪) বেছে নিন।' },
       { id: 'CT5', en: 'I often think back on what has happened to me so that I can learn from it.', bn: 'যা ঘটেছে তা থেকে শেখার জন্য আমি প্রায়ই সেগুলো নিয়ে আবার ভাবি।' },
       { id: 'CT6', en: 'It is important to me to understand how other people see an issue.', bn: 'কোনো বিষয়ে অন্যরা কীভাবে ভাবে, তা বোঝা আমার কাছে গুরুত্বপূর্ণ।' },
-      { id: 'CT7', en: 'I look for proof before I accept something as true.', bn: 'কোনো কিছু সত্য বলে মেনে নেওয়ার আগে আমি প্রমাণ খুঁজি।' },
       { id: 'CT8', en: 'I often look back at how I worked something out, to see if I could have done it better.', bn: 'কোনো কিছু কীভাবে ভেবে বের করেছি, আমি প্রায়ই তা ফিরে দেখি, যাতে বুঝতে পারি আরও ভালোভাবে করা যেত কি না।' },
       { id: 'CT9', en: 'Before reaching a conclusion, I consider more than one possible explanation.', bn: 'কোনো সিদ্ধান্তে পৌঁছানোর আগে আমি একাধিক সম্ভাব্য ব্যাখ্যা বিবেচনা করি।' },
     ],
@@ -344,7 +342,6 @@ export const SECTIONS = [
         help: { en: 'For example, which steps to take or how to structure an answer.', bn: 'যেমন: কোন ধাপে কাজ করব বা উত্তর কীভাবে সাজাব।' } },
       { id: 'GD5', en: 'I trust GenAI’s answers more than my own first idea.', bn: 'নিজের প্রথম ধারণার চেয়ে আমি GenAI-এর উত্তরে বেশি ভরসা করি।' },
       { id: 'GD6', en: 'I end up using GenAI for my studies more than I planned.', bn: 'পড়াশোনায় যতটা ভেবেছিলাম, শেষ পর্যন্ত তার চেয়ে বেশি GenAI ব্যবহার করে ফেলি।' },
-      { id: 'GD7', en: 'If GenAI were no longer available, I would find it hard to keep up with my courses.', bn: 'GenAI না থাকলে কোর্সের পড়াশোনা চালিয়ে যাওয়া আমার জন্য কঠিন হবে।' },
       { id: 'GD8', en: 'I open a GenAI tool out of habit, even for easy study tasks.', bn: 'সহজ পড়াশোনার কাজেও আমি অভ্যাসবশত GenAI খুলে ফেলি।' },
     ],
   },

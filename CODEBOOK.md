@@ -1,4 +1,4 @@
-# Codebook — GenAI Dependence Survey (form version 2.7)
+# Codebook — GenAI Dependence Survey (form version 2.8)
 
 *Generated from `public/questions.js` by `npm run generate`. Column names are the lower-case item codes.*
 
@@ -61,10 +61,9 @@ Only participants who answer **Yes** to all three are allowed to continue; nothi
 | use5 | What do you use GenAI for in your studies? | Multi-select (text array). In `responses_spss`: use5_concepts, use5_writing, use5_coding, use5_maths, use5_summarising, use5_exam_prep, use5_ideas, use5_feedback, use5_translation, use5_research_sources, use5_other_selected (0/1) |
 | use5_other | "Other" text for USE5 | Free text (≤ 200 chars) |
 | use6 | When GenAI gives you an answer for your studies, what do you usually do with it? | 1 = Use it as it is; 2 = Change it a little, then use it; 3 = Use it as a start, then rewrite it in my own words; 4 = Only use it to check or improve my own work |
-| use7 | Do you pay for a GenAI tool (for example, ChatGPT Plus)? | 1 = Yes; 2 = No |
 | use8 | Have you received any training or guidelines on using AI in your studies from your university or teachers? | 1 = Yes; 2 = No; 3 = Not sure |
 | use9 | Apart from studies, how often in the last 6 months did you chat with an AI for company or emotional support? | 1 = Never; 2 = Rarely; 3 = Sometimes; 4 = Often; 5 = Very often |
-| use10 | Apart from your studies, what else do you use GenAI for? | Multi-select (text array). In `responses_spss`: use10_info, use10_messages, use10_entertainment, use10_advice, use10_planning, use10_skills, use10_work, use10_company, use10_none, use10_other_selected (0/1) |
+| use10 | Apart from your studies, what else do you use GenAI for? | Multi-select (text array). In `responses_spss`: use10_info, use10_messages, use10_entertainment, use10_advice, use10_planning, use10_skills, use10_work, use10_none, use10_other_selected (0/1) |
 | use10_other | "Other" text for USE10 | Free text (≤ 200 chars) |
 
 ## Section D: How You Think — Critical Thinking (DV1)
@@ -80,7 +79,6 @@ Scale: 1 = Strongly Disagree, 2 = Disagree, 3 = Neutral, 4 = Agree, 5 = Strongly
 | att | To show you are reading carefully, please choose "Agree" (4) here. | Attention check (correct = 4) |
 | ct5 | I often think back on what has happened to me so that I can learn from it. |  |
 | ct6 | It is important to me to understand how other people see an issue. |  |
-| ct7 | I look for proof before I accept something as true. |  |
 | ct8 | I often look back at how I worked something out, to see if I could have done it better. |  |
 | ct9 | Before reaching a conclusion, I consider more than one possible explanation. |  |
 
@@ -141,7 +139,6 @@ Scale: 1 = Strongly Disagree, 2 = Disagree, 3 = Neutral, 4 = Agree, 5 = Strongly
 | gd4 | I depend on GenAI to decide how to do my study tasks. |  |
 | gd5 | I trust GenAI’s answers more than my own first idea. |  |
 | gd6 | I end up using GenAI for my studies more than I planned. |  |
-| gd7 | If GenAI were no longer available, I would find it hard to keep up with my courses. |  |
 | gd8 | I open a GenAI tool out of habit, even for easy study tasks. |  |
 
 ## Section I: Letting GenAI Think for You — Cognitive Offloading (mediator)
@@ -175,11 +172,11 @@ Scale: 1 = Strongly Disagree, 2 = Disagree, 3 = Neutral, 4 = Agree, 5 = Strongly
 
 ## Construct mean scores (in `responses_spss`)
 
-- **ct_mean** — Critical Thinking (DV1): mean of CT1, CT2, CT3, CT4, CT5, CT6, CT7, CT8, CT9
+- **ct_mean** — Critical Thinking (DV1): mean of CT1, CT2, CT3, CT4, CT5, CT6, CT8, CT9
 - **sc_mean** — Social Connectivity (DV2): mean of SC1, SC2, SC3, SC4, SC5, SC6, SC7, SC8, SC9
 - **hc_mean** — Social Connectivity (DV2): human connectedness: mean of HC1, HC2, HC3, HC4, HC5, HC6 (reversed)
 - **se_mean** — Self-Efficacy (DV3): mean of ASE1, ASE2, ASE3, ASE4, GSE1, GSE2, GSE3, GSE4
-- **gd_mean** — GenAI Dependence (IV): mean of GD1, GD2, GD3, GD4, GD5, GD6, GD7, GD8
+- **gd_mean** — GenAI Dependence (IV): mean of GD1, GD2, GD3, GD4, GD5, GD6, GD8
 - **co_mean** — Cognitive Offloading (mediator): mean of CO1, CO2, CO3, CO4, CO5, CO6
 - **al_mean** — AI Literacy (moderator): mean of AL1, AL2, AL3, AL4, AL5, AL6, AL7, AL8, AL9
 
