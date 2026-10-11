@@ -16,8 +16,8 @@
   --mark-soft: #f5e6e0;
   --top: 50px;
   --serif: 'Fraunces', Georgia, serif;
-  --sans: 'Inter', 'Hind Siliguri', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --bn: 'Hind Siliguri', 'Inter', system-ui, sans-serif;
+  --sans: 'Inter', 'Noto Serif Bengali', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --bn: 'Inter', 'Noto Serif Bengali', serif;   /* Latin letters in Inter, all Bangla letters in Noto Serif Bengali */
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
@@ -248,7 +248,7 @@ body[data-lang="both"] .il .en + .bn::before { content: " / "; color: var(--rule
   .opt { width: 100%; min-height: 48px; padding: 10px 12px; font-size: 15px; }
   .opt .il .en, .opt .il .bn { display: block; }
   body[data-lang="both"] .opt .il .en + .bn::before { content: none; }
-  .opt .il .bn { font-size: 13.5px; margin-top: 1px; }
+  .opt .il .bn { font-size: 14px; margin-top: 1px; }
   .opt .box { flex-basis: 18px; height: 18px; }
 
   /* typed answers: 16px stops iPhone from zooming in */
