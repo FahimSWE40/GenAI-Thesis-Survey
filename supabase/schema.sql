@@ -131,7 +131,7 @@ comment on column public.responses.dem6 is 'DEM6: Which subject group is your de
 comment on column public.responses.dem7 is 'DEM7: Which year of study are you in now? | 1=1st year; 2=2nd year; 3=3rd year; 4=4th year or above';
 comment on column public.responses.dem8 is 'DEM8: What is your current CGPA (out of 4.00)? | 1=Below 2.50; 2=2.50 – 2.99; 3=3.00 – 3.49; 4=3.50 – 4.00 | OPTIONAL (blank = no answer)';
 comment on column public.responses.dem9 is 'DEM9: Which device do you mostly use for studying? | 1=Smartphone; 2=Laptop; 3=Desktop computer; 4=Tablet';
-comment on column public.responses.dem10 is 'DEM10: About how fast is the internet you usually use for studying? | 1=Below 5 Mbps (videos often buffer); 2=5–20 Mbps (videos play, sometimes slow); 3=20–50 Mbps (smooth video and online classes); 4=Above 50 Mbps (very fast); 5=Don''t know';
+comment on column public.responses.dem10 is 'DEM10: How is the internet speed you usually use for studying? | 1=Very poor; 2=Poor; 3=Average; 4=Good; 5=Very good';
 comment on column public.responses.use1 is 'USE1: Which GenAI tools do you use for your studies? | multi-select: chatgpt, gemini, copilot, meta_ai, claude, deepseek, perplexity, github_copilot, grammarly_quillbot, other';
 comment on column public.responses.use2 is 'USE2: How long have you been using GenAI for your studies? | 1=Less than 6 months; 2=6–12 months; 3=1–2 years; 4=More than 2 years';
 comment on column public.responses.use3 is 'USE3: In a normal week, how often do you use GenAI for your studies? | 1=Less than once a week; 2=1–2 days a week; 3=3–5 days a week; 4=Almost every day; 5=Several times every day';

@@ -47,7 +47,7 @@ Only participants who answer **Yes** to all three are allowed to continue; nothi
 | dem7 | Which year of study are you in now? | 1 = 1st year; 2 = 2nd year; 3 = 3rd year; 4 = 4th year or above |
 | dem8 | What is your current CGPA (out of 4.00)? | 1 = Below 2.50; 2 = 2.50 – 2.99; 3 = 3.00 – 3.49; 4 = 3.50 – 4.00 |
 | dem9 | Which device do you mostly use for studying? | 1 = Smartphone; 2 = Laptop; 3 = Desktop computer; 4 = Tablet |
-| dem10 | About how fast is the internet you usually use for studying? | 1 = Below 5 Mbps (videos often buffer); 2 = 5–20 Mbps (videos play, sometimes slow); 3 = 20–50 Mbps (smooth video and online classes); 4 = Above 50 Mbps (very fast); 5 = Don't know |
+| dem10 | How is the internet speed you usually use for studying? | 1 = Very poor; 2 = Poor; 3 = Average; 4 = Good; 5 = Very good |
 
 ## Section C: Your Use of GenAI
 

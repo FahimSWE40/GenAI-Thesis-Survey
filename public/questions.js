@@ -133,14 +133,12 @@ export const SECTIONS = [
         { v: 2, en: 'Laptop', bn: 'ল্যাপটপ' },
         { v: 3, en: 'Desktop computer', bn: 'ডেস্কটপ কম্পিউটার' },
         { v: 4, en: 'Tablet', bn: 'ট্যাবলেট' } ] },
-      { id: 'DEM10', type: 'single', en: 'About how fast is the internet you usually use for studying?', bn: 'পড়াশোনার জন্য আপনি সাধারণত যে ইন্টারনেট ব্যবহার করেন, তার গতি আনুমানিক কত?',
-        help: { en: 'Think of your usual connection (Wi-Fi or mobile data). To check, open fast.com — it shows the speed in Mbps.',
-                bn: 'আপনার সাধারণ সংযোগের কথা ভাবুন (ওয়াই-ফাই বা মোবাইল ডেটা)। যাচাই করতে fast.com খুলুন — সেখানে গতি Mbps-এ দেখায়।' }, options: [
-        { v: 1, en: 'Below 5 Mbps (videos often buffer)', bn: '৫ Mbps-এর কম (ভিডিও প্রায়ই আটকে যায়)' },
-        { v: 2, en: '5–20 Mbps (videos play, sometimes slow)', bn: '৫–২০ Mbps (ভিডিও চলে, মাঝে মাঝে ধীর)' },
-        { v: 3, en: '20–50 Mbps (smooth video and online classes)', bn: '২০–৫০ Mbps (ভিডিও ও অনলাইন ক্লাস ভালোভাবে চলে)' },
-        { v: 4, en: 'Above 50 Mbps (very fast)', bn: '৫০ Mbps-এর বেশি (খুব দ্রুত)' },
-        { v: 5, en: "Don't know", bn: 'জানি না' } ] },
+      { id: 'DEM10', type: 'single', en: 'How is the internet speed you usually use for studying?', bn: 'পড়াশোনার জন্য আপনি সাধারণত যে ইন্টারনেট ব্যবহার করেন, তার গতি কেমন?', options: [
+        { v: 1, en: 'Very poor', bn: 'খুব খারাপ' },
+        { v: 2, en: 'Poor', bn: 'খারাপ' },
+        { v: 3, en: 'Average', bn: 'মোটামুটি' },
+        { v: 4, en: 'Good', bn: 'ভালো' },
+        { v: 5, en: 'Very good', bn: 'খুব ভালো' } ] },
     ],
   },
   {
