@@ -32,7 +32,8 @@ export const TEXT_PLACEHOLDER = { en: 'Type here', bn: 'এখানে লি�
 // Fill these in before going live (npm test warns while they are empty).
 // They are shown under the consent text.
 export const STUDY_INFO = {
-  contactEmail: '',   // researcher contact, e.g. 'your.name@diu.edu.bd'
+  researcherName: 'Fahim Bin Forhad',
+  contactEmail: 'forhad2305341389@diu.edu.bd',   // researcher contact shown under the consent text
   ethicsRef: '',      // ethics approval reference from the department / university committee
   // Cloudflare Turnstile SITE key (public). Leave empty to switch the bot check off.
   // The matching SECRET key goes only in Vercel as TURNSTILE_SECRET_KEY.

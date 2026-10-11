@@ -98,6 +98,7 @@ console.log('All validator tests passed.');
 
 // Pre-launch reminder (does not fail the tests)
 const { STUDY_INFO } = await import('../public/questions.js');
-if (!STUDY_INFO.contactEmail || !STUDY_INFO.ethicsRef) {
-  console.warn('PRE-LAUNCH: set STUDY_INFO.contactEmail and STUDY_INFO.ethicsRef in public/questions.js before sharing the form.');
+const missingInfo = ['contactEmail', 'ethicsRef'].filter(k => !STUDY_INFO[k]);
+if (missingInfo.length) {
+  console.warn(`PRE-LAUNCH: set STUDY_INFO.${missingInfo.join(' and STUDY_INFO.')} in public/questions.js before sharing the form.`);
 }

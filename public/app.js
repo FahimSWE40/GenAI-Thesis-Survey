@@ -123,7 +123,7 @@ function render() {
       <h1>${t({
         en: 'Effects of GenAI Dependence on Critical Thinking, Social Connectivity, and Self-Efficacy among Bangladeshi University Students',
         bn: 'বাংলাদেশি বিশ্ববিদ্যালয় শিক্ষার্থীদের সমালোচনামূলক চিন্তা, সামাজিক সংযোগ ও আত্ম-সক্ষমতার ওপর জেনারেটিভ এআই (GenAI) নির্ভরতার প্রভাব' })}</h1>
-      <div class="org">Department of Software Engineering, Daffodil International University</div>
+      <div class="org">${STUDY_INFO.researcherName ? `${esc(STUDY_INFO.researcherName)} · ` : ''}Department of Software Engineering, Daffodil International University</div>
     </header>`;
 
   if (state.status === 'done') {
@@ -139,7 +139,7 @@ function render() {
   }
 
   const contact = [
-    STUDY_INFO.contactEmail && `${ti({ en: 'Questions about this study', bn: 'এই গবেষণা নিয়ে প্রশ্ন' })}: <a href="mailto:${esc(STUDY_INFO.contactEmail)}">${esc(STUDY_INFO.contactEmail)}</a>`,
+    STUDY_INFO.contactEmail && `${ti({ en: 'Questions about this study', bn: 'এই গবেষণা নিয়ে প্রশ্ন' })}: ${STUDY_INFO.researcherName ? `${esc(STUDY_INFO.researcherName)}, ` : ''}<a href="mailto:${esc(STUDY_INFO.contactEmail)}">${esc(STUDY_INFO.contactEmail)}</a>`,
     STUDY_INFO.ethicsRef && `${ti({ en: 'Ethics approval', bn: 'নৈতিক অনুমোদন' })}: ${esc(STUDY_INFO.ethicsRef)}`,
   ].filter(Boolean).join(' · ');
   const consent = `<div class="consent"><p>${t(CONSENT_TEXT)}</p>${contact ? `<p class="consent-meta">${contact}</p>` : ''}</div>`;
