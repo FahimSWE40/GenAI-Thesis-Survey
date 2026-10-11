@@ -4,6 +4,7 @@ import { writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SECTIONS, SCREENING, LIKERT_LABELS, FORM_VERSION, fieldList } from '../public/questions.js';
+import { exportViewsSql, spssSyntax, MIN_SECONDS, SMARTPLS_MISSING } from './exports.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const FIELDS = fieldList();
@@ -119,10 +120,13 @@ from public.responses;
 
 revoke all on public.responses_spss from anon, authenticated;
 revoke all on public.responses_spss from service_role;   -- export in the SQL Editor; not exposed to the server
+${exportViewsSql()}
 notify pgrst, 'reload schema';   -- let the API see the new tables immediately
 `;
 mkdirSync(join(root, 'supabase'), { recursive: true });
 writeFileSync(join(root, 'supabase', 'schema.sql'), schema);
+mkdirSync(join(root, 'analysis'), { recursive: true });
+writeFileSync(join(root, 'analysis', 'spss_labels.sps'), spssSyntax(FORM_VERSION));
 
 // ---------- CODEBOOK.md ----------
 let md = `# Codebook — GenAI Dependence Survey (form version ${FORM_VERSION})
@@ -184,6 +188,15 @@ ${likertSections.map(s => {
 }).join('\n')}
 
 > Use the item-level columns (not the means) as indicators in SmartPLS.
+
+## Analysis exports
+
+| View | For | Rows | Column names |
+|---|---|---|---|
+| \`export_spss\` | SPSS | all submissions, with \`Valid\` flag | form codes in capitals (\`DEM1\`, \`GD1\`, \`HC6_R\`, \`USE1_chatgpt\`), \`Case_ID\` first |
+| \`export_smartpls\` | SmartPLS | valid cases only | \`Case_ID\`, numeric controls and indicators; missing = ${SMARTPLS_MISSING} |
+
+\`Valid = 1\`: not \`src = test\`, not withdrawn, both attention checks passed, at least ${MIN_SECONDS} seconds, first submission from the device. SPSS labels: \`analysis/spss_labels.sps\`.
 `;
 writeFileSync(join(root, 'CODEBOOK.md'), md);
 console.log('Wrote supabase/schema.sql and CODEBOOK.md');

@@ -181,3 +181,12 @@ Scale: 1 = Strongly Disagree, 2 = Disagree, 3 = Neutral, 4 = Agree, 5 = Strongly
 - **al_mean** — AI Literacy (moderator): mean of AL1, AL2, AL3, AL4, AL5, AL6, AL7, AL8, AL9
 
 > Use the item-level columns (not the means) as indicators in SmartPLS.
+
+## Analysis exports
+
+| View | For | Rows | Column names |
+|---|---|---|---|
+| `export_spss` | SPSS | all submissions, with `Valid` flag | form codes in capitals (`DEM1`, `GD1`, `HC6_R`, `USE1_chatgpt`), `Case_ID` first |
+| `export_smartpls` | SmartPLS | valid cases only | `Case_ID`, numeric controls and indicators; missing = -99 |
+
+`Valid = 1`: not `src = test`, not withdrawn, both attention checks passed, at least 300 seconds, first submission from the device. SPSS labels: `analysis/spss_labels.sps`.

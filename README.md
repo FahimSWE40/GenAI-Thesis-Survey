@@ -226,14 +226,20 @@ where src is distinct from 'test';
 
 ## Export for SPSS / SmartPLS
 
-Run `select * from responses_spss;` in the SQL Editor and **Download CSV**. The view includes:
+Two ready-made exports name every column **exactly like the form codes** (`GD1`, `CT9`, `SC1`, `HC6_R`, `USE1_chatgpt`, …) and identify each submission with **`Case_ID`**. In the Supabase SQL Editor run one of these and click **Download CSV**:
 
-- every item as its own column (lower-case code, e.g. `gd1`, `sc3`),
-- multi-select answers (USE1, USE5) as 0/1 columns,
-- the authenticity fields and the `withdrawn` flag,
-- construct means: `ct_mean`, `sc_mean`, `se_mean`, `gd_mean`, `co_mean`, `al_mean`.
+| Query | Use in | What you get |
+|---|---|---|
+| `select * from export_spss;` | **SPSS** | All submissions and all variables: `Case_ID`, `Receipt`, timestamps, completion time, language, device, recruitment source; screening flags `Flag_test`, `Flag_withdrawn`, `Flag_attention`, `Flag_too_fast` (< 300 s), `Flag_repeat_device`, `Flag_straightline_n`; overall **`Valid`** (1 = include); every answer; multi-select answers as 0/1 columns; `HC6_R` (reversed); construct means `CT_mean`, `SC_mean`, `HC_mean`, `SE_mean`, `GD_mean`, `CO_mean`, `AL_mean` |
+| `select * from export_smartpls;` | **SmartPLS** | Valid cases only; numbers only: `Case_ID`, numeric controls (DEM, USE) and every model indicator, with `HC6_R` instead of `HC6`; skipped optional answers coded **`-99`** |
 
-Recommended screening order (report how many rows each step removes): `withdrawn = true` → `src = 'test'` → `attention_pass = false` → `duration_sec < 300` → straight-lining → repeated `respondent_id`. Use the item columns, not the means, as indicators in SmartPLS.
+**`Valid = 1`** means: not a test (`?src=test`), not withdrawn, passed both attention checks, took at least 300 seconds, and is the first submission from that device. Straight-lining is flagged (`Flag_straightline_n` = number of rating sections answered with a single value) but not excluded automatically. Check those cases and decide in SPSS.
+
+**SPSS:** File → Import Data → CSV Data → open `export_spss` CSV → run [`analysis/spss_labels.sps`](analysis/spss_labels.sps) (adds every question text and answer label) → `FILTER BY Valid.`
+
+**SmartPLS 4:** import the `export_smartpls` CSV, set the **missing value marker to `-99`**, then build the model: GD → CO → CT / SC / HC / SE, with AL as moderator. Use item columns as indicators, not the means.
+
+The older lower-case view `responses_spss` is still available for quick checks.
 
 ---
 
