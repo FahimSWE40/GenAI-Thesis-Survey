@@ -1,40 +1,24 @@
-/* Eye-friendly palette: warm low-glare paper, soft charcoal text (~11:1),
-   muted sage accent, terracotta for warnings. All text meets WCAG AA;
-   answer controls meet 3:1. */
+/* Soft light palette: near-white paper on a gentle warm-grey background,
+   soft charcoal text (~10:1), pastel sage accent, soft terracotta for errors only.
+   All text meets WCAG AA; answer controls meet 3:1. Always light (no dark mode). */
 :root {
-  --desk: #e9e6dd;
-  --paper: #f6f4ee;
-  --ink: #2e3430;
-  --muted: #5f6862;
-  --rule: #e0dcd2;
-  --rule-strong: #c9c4b7;
-  --control: #8a8476;
-  --accent: #3f7563;
-  --accent-ink: #f6f4ee;
-  --accent-soft: #e3ece6;
-  --mark: #a8513b;
-  --mark-soft: #f5e6e0;
+  --desk: #f5f3ef;
+  --paper: #fdfcfa;
+  --ink: #3a413d;
+  --muted: #6a736e;
+  --rule: #ece8e1;
+  --rule-strong: #dcd7cd;
+  --control: #928c85;
+  --accent: #467c69;
+  --accent-ink: #ffffff;
+  --accent-soft: #eaf3ee;
+  --mark: #a65945;
+  --mark-soft: #fbefea;
   --top: 50px;
   --serif: 'Fraunces', Georgia, serif;
   --sans: 'Inter', 'Noto Serif Bengali', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --bn: 'Inter', 'Noto Serif Bengali', serif;   /* Latin letters in Inter, all Bangla letters in Noto Serif Bengali */
-  color-scheme: light dark;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --desk: #1b1e1c;
-    --paper: #232725;
-    --ink: #d6dbd5;
-    --muted: #a0a8a2;
-    --rule: #303632;
-    --rule-strong: #434a45;
-    --control: #6f7972;
-    --accent: #86bba3;
-    --accent-ink: #1b1e1c;
-    --accent-soft: #2b3a33;
-    --mark: #e39a85;
-    --mark-soft: #3a2b26;
-  }
+  color-scheme: light;
 }
 
 * { box-sizing: border-box; }
@@ -75,7 +59,7 @@ body[data-lang="both"] .il .en + .bn::before { content: " / "; color: var(--rule
 .sheet {
   max-width: 880px; margin: 22px auto 60px; padding: 0;
   background: var(--paper); border: 1px solid var(--rule); outline: none;
-  box-shadow: 0 1px 0 var(--rule), 0 18px 40px -30px rgba(0,0,0,.18);
+  box-shadow: 0 1px 2px rgba(60, 50, 40, .04), 0 12px 32px -20px rgba(60, 50, 40, .14); border-radius: 6px; overflow: clip;   /* clip keeps the sticky scale header working */
 }
 @media (max-width: 640px) {
   .sheet { margin: 0; border: 0; box-shadow: none; }
