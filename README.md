@@ -6,9 +6,12 @@ A bilingual (English / বাংলা) online questionnaire for the undergradua
 >
 > Fahim Bin Forhad · Supervisor: Dr. Md. Abdul Kader, Associate Professor · Department of Software Engineering, Daffodil International University
 
+**Live form:** https://gen-ai-survey.vercel.app
+
 The form collects anonymous survey data for a quantitative, cross-sectional study analysed with PLS-SEM. It is built to be easy for students to complete on a phone, and to give reviewers verifiable evidence that every response came from a real, separate participant.
 
 - **Front end:** plain HTML, CSS and JavaScript — no framework, no build step
+- **Fonts:** Inter (English), Noto Serif Bengali (বাংলা), Fraunces (headings) — via Google Fonts
 - **Server:** one Vercel serverless function (`api/submit.js`)
 - **Database:** Supabase (PostgreSQL), append-only
 - **Dependencies:** none (Node.js 18+ only for local testing)
