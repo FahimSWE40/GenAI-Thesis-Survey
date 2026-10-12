@@ -100,8 +100,9 @@ export const SECTIONS = [
       { id: 'DEM2', type: 'single', en: 'Your gender', bn: 'আপনার লিঙ্গ', options: [
         { v: 1, en: 'Male', bn: 'পুরুষ' },
         { v: 2, en: 'Female', bn: 'নারী' } ] },
-      { id: 'DEM3', type: 'text', maxLength: 150, en: 'Name of your university or college', bn: 'আপনার বিশ্ববিদ্যালয় বা কলেজের নাম',
-        help: { en: 'For example: Daffodil International University', bn: 'যেমন: ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি' } },
+      { id: 'DEM3', type: 'text', maxLength: 150, suggest: 'universities', en: 'Name of your university or college', bn: 'আপনার বিশ্ববিদ্যালয় বা কলেজের নাম',
+        help: { en: 'Start typing the name (e.g. Daffodil or DIU) and choose it from the list. If it is not listed (e.g. a college), type the full name.',
+                bn: 'নামের কিছু অংশ লিখুন (যেমন Daffodil বা DIU) এবং তালিকা থেকে বেছে নিন। তালিকায় না থাকলে (যেমন কলেজ) পুরো নাম লিখুন।' } },
       { id: 'DEM4', type: 'single', en: 'What type of institution do you study at?', bn: 'আপনি কোন ধরনের প্রতিষ্ঠানে পড়েন?', options: [
         { v: 1, en: 'Public university', bn: 'পাবলিক বিশ্ববিদ্যালয়' },
         { v: 2, en: 'Private university', bn: 'প্রাইভেট বিশ্ববিদ্যালয়' },

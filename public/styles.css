@@ -195,6 +195,21 @@ body[data-lang="both"] .il .en + .bn::before { content: " / "; color: var(--rule
 .text-input:focus { outline: none; border-bottom-color: var(--accent); border-bottom-width: 2px; }
 .text-input::placeholder { color: var(--muted); opacity: .7; }
 
+/* university search (DEM3) */
+.combo { position: relative; }
+.combo-list {
+  position: absolute; z-index: 20; left: 0; top: 100%; width: min(100%, 520px); max-height: 300px; overflow-y: auto;
+  margin: 4px 0 0; padding: 4px 0; list-style: none;
+  background: var(--paper); border: 1px solid var(--rule-strong); border-radius: 8px; box-shadow: 0 6px 18px rgba(58, 65, 61, .12);
+}
+.combo-list [role="option"] { display: flex; justify-content: space-between; gap: 12px; padding: 10px 12px; font-size: 14px; line-height: 1.35; cursor: pointer; }
+.combo-list [role="option"]:hover, .combo-list [aria-selected="true"] { background: var(--accent-soft); }
+.combo-type { flex: none; font-size: 12px; color: var(--muted); white-space: nowrap; }
+@media (max-width: 640px) {
+  .combo-list { width: 100%; }
+  .combo-list [role="option"] { flex-direction: column; gap: 2px; min-height: 48px; }
+}
+
 /* sections with their own (longer) scale labels, e.g. People or AI? */
 @media (min-width: 641px) {
   .mx-head.mx-wide, .mx-row.mx-wide { grid-template-columns: 1fr repeat(5, 84px); }

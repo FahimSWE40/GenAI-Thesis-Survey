@@ -1,4 +1,7 @@
 import { SCREENING, SECTIONS, LIKERT_LABELS, FORM_VERSION, CONSENT_TEXT, TEXT_PLACEHOLDER, STUDY_INFO } from './questions.js';
+import { searchUniversities } from './universities.js';
+
+const SEARCH_PLACEHOLDER = { en: 'Type to search', bn: 'খুঁজতে লিখুন' };
 
 // Stable key: a new form version must never wipe a participant's half-finished answers.
 // (Answers are keyed by item code; codes that no longer exist are simply ignored.)
@@ -69,9 +72,11 @@ function textQ(q) {
     <div class="q-label">
       <label class="q-text" for="in-${q.id}" style="display:block">${t(q)}</label>${help(q)}
     </div>
-    <div class="q-answer">
+    <div class="q-answer${q.suggest ? ' combo' : ''}">
       <input class="text-input" id="in-${q.id}" type="text" name="${q.id}" data-text="1" maxlength="${q.maxLength || 150}"
-        autocomplete="off" placeholder="${esc(TEXT_PLACEHOLDER.en)} · ${esc(TEXT_PLACEHOLDER.bn)}" value="${esc(state.answers[q.id] || '')}">
+        autocomplete="off" placeholder="${esc(q.suggest ? SEARCH_PLACEHOLDER.en : TEXT_PLACEHOLDER.en)} · ${esc(q.suggest ? SEARCH_PLACEHOLDER.bn : TEXT_PLACEHOLDER.bn)}" value="${esc(state.answers[q.id] || '')}"
+        ${q.suggest ? `data-suggest="1" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="list-${q.id}"` : ''}>
+      ${q.suggest ? `<ul class="combo-list" id="list-${q.id}" role="listbox" hidden></ul>` : ''}
     </div>
   </div>`;
 }
@@ -227,7 +232,60 @@ app.addEventListener('input', e => {
     if (el.value.trim().length >= 2) document.getElementById('q-' + el.name)?.classList.remove('missing');
     save();
     update();
+    if (el.dataset.suggest) showSuggestions(el);
   }
+});
+
+// ---------- university search (DEM3): suggestions while typing; any typed name is still accepted ----------
+let comboActive = -1;
+function comboParts(input) { return { input, list: document.getElementById(input.getAttribute('aria-controls')) }; }
+function closeSuggestions(input) {
+  const { list } = comboParts(input);
+  list.hidden = true; list.innerHTML = '';
+  input.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant');
+  comboActive = -1;
+}
+function showSuggestions(input) {
+  const { list } = comboParts(input);
+  const hits = searchUniversities(input.value);
+  if (!hits.length || (hits.length === 1 && hits[0].name === input.value)) return closeSuggestions(input);
+  list.innerHTML = hits.map((u, i) => `<li role="option" id="${list.id}-${i}" data-name="${esc(u.name)}" aria-selected="false">${esc(u.label)}<span class="combo-type">${u.type === 'public' ? 'Public · পাবলিক' : 'Private · প্রাইভেট'}</span></li>`).join('');
+  list.hidden = false; input.setAttribute('aria-expanded', 'true');
+  comboActive = -1;
+}
+function moveActive(input, step) {
+  const { list } = comboParts(input);
+  const items = [...list.children];
+  if (!items.length) return;
+  comboActive = (comboActive + step + items.length) % items.length;
+  items.forEach((li, i) => li.setAttribute('aria-selected', String(i === comboActive)));
+  input.setAttribute('aria-activedescendant', items[comboActive].id);
+  items[comboActive].scrollIntoView({ block: 'nearest' });
+}
+function pickSuggestion(input, name) {
+  input.value = name;
+  state.answers[input.name] = name;
+  document.getElementById('q-' + input.name)?.classList.remove('missing');
+  save(); update();
+  closeSuggestions(input);
+}
+app.addEventListener('keydown', e => {
+  const input = e.target;
+  if (!input.dataset || !input.dataset.suggest) return;
+  const { list } = comboParts(input);
+  if (e.key === 'ArrowDown') { e.preventDefault(); list.hidden ? showSuggestions(input) : moveActive(input, 1); }
+  else if (e.key === 'ArrowUp' && !list.hidden) { e.preventDefault(); moveActive(input, -1); }
+  else if (e.key === 'Enter' && !list.hidden && comboActive >= 0) { e.preventDefault(); pickSuggestion(input, list.children[comboActive].dataset.name); }
+  else if (e.key === 'Escape' && !list.hidden) { e.preventDefault(); closeSuggestions(input); }
+});
+app.addEventListener('mousedown', e => {   // mousedown keeps focus in the input until the choice is made
+  const li = e.target.closest('.combo-list [role="option"]');
+  if (!li) return;
+  e.preventDefault();
+  pickSuggestion(li.closest('.combo').querySelector('[data-suggest]'), li.dataset.name);
+});
+app.addEventListener('focusout', e => {
+  if (e.target.dataset && e.target.dataset.suggest) closeSuggestions(e.target);
 });
 
 // ---------- submit ----------
