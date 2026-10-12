@@ -7,6 +7,7 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { SECTIONS, fieldList } from '../public/questions.js';
 import { MIN_SECONDS } from '../scripts/exports.mjs';
+import { analyse } from './stats.js';
 
 export const TARGET_N = 400;      // planned sample size (Context.md)
 const RECENT_LIMIT = 200;
@@ -21,8 +22,10 @@ export function adminTokenOk(given) {
 const LIKERT = SECTIONS.filter(s => s.kind === 'likert').map(s => ({ short: s.short, cols: s.items.filter(i => !i.attention).map(i => i.id.toLowerCase()) }));
 const QMAP = Object.fromEntries(fieldList().filter(f => f.kind === 'single').map(f => [f.col, f.q]));
 const label = (col, v) => QMAP[col]?.options.find(o => o.v === v)?.en ?? (v == null ? 'No answer' : String(v));
-const SELECT = ['id', 'created_at', 'duration_sec', 'form_version', 'ui_lang', 'attention_pass', 'respondent_id', 'device_type', 'src',
-  'receipt_code', 'bot_check', 'dem2', 'dem3', 'dem4', 'dem6', 'dem7', ...LIKERT.flatMap(s => s.cols)].join(',');
+// Item answers are read only to compute aggregate statistics (api/stats.js); they are never sent to the page.
+const ANSWER_COLS = fieldList().filter(f => ['single', 'multi', 'likert'].includes(f.kind)).map(f => f.col);
+const SELECT = [...new Set(['id', 'created_at', 'duration_sec', 'form_version', 'ui_lang', 'attention_pass', 'respondent_id', 'device_type', 'src',
+  'receipt_code', 'bot_check', 'dem3', ...ANSWER_COLS])].join(',');
 
 async function rest(path, rangeFrom, rangeTo) {
   const url = process.env.SUPABASE_URL.replace(/\/$/, '');
@@ -77,6 +80,7 @@ export function summarize(rows, withdrawnCodes, visits = []) {
   });
 
   const real = cases.filter(c => !c.flags.includes('test'));
+  const validIds = new Set(cases.filter(c => c.valid).map(c => c.id));
   const valid = cases.filter(c => c.valid);
   const today = dhakaDay(new Date().toISOString());
   const durations = real.map(c => c.duration_sec).filter(Number.isFinite).sort((a, b) => a - b);
@@ -118,6 +122,7 @@ export function summarize(rows, withdrawnCodes, visits = []) {
       language: countBy(valid, c => ({ en: 'English', bn: 'Bangla', both: 'English + Bangla' })[c.lang] || c.lang || '(unknown)'),
     },
     visits: visitSummary(visits, real),
+    analysis: analyse(rows.filter(r => validIds.has(r.id))),
     recent: cases.slice(-RECENT_LIMIT).reverse().map(({ dem2, dem4, dem6, dem7, _dev, ...c }) => c),
   };
 }

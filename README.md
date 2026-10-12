@@ -125,6 +125,7 @@ insert into withdrawals (receipt_code, note) values ('GA-5YF4-PZMA', 'participan
 | `api/health.js` | Deployment status page (`/api/health`): settings present + database reachable |
 | `api/admin.js` · `public/admin.*` | Researcher dashboard (`/admin`): submissions and link visits, password-protected, read-only |
 | `api/visit.js` | Records anonymous link-visit events for the dashboard |
+| `api/stats.js` | Descriptive statistics for the dashboard (frequencies, M, SD, skewness, kurtosis, α, correlations) |
 | `supabase/schema.sql` | Tables, append-only trigger, withdrawals table and analysis view — *generated* |
 | `supabase/upgrade_to_v2_8.sql` | Brings a database created before v2.8 up to the current rules (applied to the live project on 2026-10-12) |
 | `CODEBOOK.md` | Every column and value code — *generated* |
@@ -229,14 +230,20 @@ where src is distinct from 'test';
 
 ## Admin dashboard
 
-**https://gen-ai-survey.vercel.app/admin** shows the researcher how data collection is going. Sign in with the admin password (`ADMIN_TOKEN`, a *sensitive* Vercel environment variable; the researcher's copy is in the git-ignored `.env.local`).
+**https://gen-ai-survey.vercel.app/admin** shows the researcher how data collection is going and gives thesis-ready descriptive statistics. Sign in with the admin password (`ADMIN_TOKEN`, a *sensitive* Vercel environment variable; the researcher's copy is in the git-ignored `.env.local`).
 
-- **Numbers:** valid responses, all submissions, today's count, exclusions, median completion time, last submission, progress to the target sample (N = 400).
-- **Charts:** submissions per day (valid vs excluded); why responses are excluded; breakdown of valid responses by recruitment source, institution type, university, gender, year, subject group, device and language.
-- **Submission list:** latest 200 with case number, time, receipt code, university, source, device, completion time and status (Valid / Test / Withdrawn / Failed attention check / Too fast / Repeat device / Straight-line), with filter and search.
-- **Link visits:** unique visitors (one per browser), visitors today, how many started answering, were screened out, submitted and gave a valid response; visitors per day; and a per-link table (visitors → started → submitted → valid) for each `?src=` tag. The form page sends these anonymous events to `/api/visit` (browser ID, event, source tag and device type only; one record per visitor, event and day in the `visits` table; failures never affect the form).
+| Tab | What it shows |
+|---|---|
+| **Overview** | Valid responses, submissions, today, unique link visitors, median completion time, last submission; progress to N = 400; submissions per day (valid vs excluded); exclusion reasons; link visit → valid response funnel; unique visitors per day |
+| **Participants** | Doughnut charts (gender, age, institution type, year, study device, form language); bar charts (subject group, top universities, CGPA, internet speed, recruitment link, survey device); respondent profile table (n, %) with CSV download |
+| **GenAI use** | Bar charts for tools, purposes, duration, frequency, daily time, use of answers, AI for company, uses outside studies (multiple-answer items as % of respondents); training doughnut; frequency table with CSV download |
+| **Descriptive statistics** | Per construct: items, n, M, SD, median, min, max, skewness, kurtosis, Cronbach's α (CSV); construct means ± SD chart; Pearson correlation heatmap; item-level answer distribution (stacked 1–5 bars) and item M/SD/skewness/kurtosis (CSV) |
+| **Submissions** | Per-link table (visitors, started, submitted, valid, conversion) and the latest 200 submissions with status, filter and search |
+
+- **Statistics** use valid cases only and are computed on the server (`api/stats.js`): construct score = mean of answered items with HC6 reversed (as `CT_mean` … in `export_spss`); α on complete cases; skewness and kurtosis with the SPSS formulas. Final thesis analysis should still be run in SPSS / SmartPLS on the exports.
+- **Link visits:** the form page sends anonymous events to `/api/visit` (browser ID, event, source tag and device type only; one record per visitor, event and day in the `visits` table; failures never affect the form).
 - **Same rules as the exports:** a case counts as valid exactly when `Valid = 1` in `export_spss`.
-- **Safe by design:** read-only (cannot change or delete anything); hashed IPs, device IDs and item answers never leave the server; the password is sent in a header and kept only for the open tab; wrong passwords are slowed down; pages are `noindex` and never cached. Refreshes every minute.
+- **Safe by design:** read-only (cannot change or delete anything); hashed IPs, device IDs and individual answers never leave the server (only totals and statistics); Chart.js is loaded from cdnjs with an integrity hash; the password is sent in a header and kept only for the open tab; wrong passwords are slowed down; pages are `noindex` and never cached. Refreshes every minute.
 - **Change the password:** Vercel → Settings → Environment Variables → edit `ADMIN_TOKEN` → redeploy.
 
 ---

@@ -150,6 +150,20 @@ assert.equal(adminTokenOk('correct-horse-battery'), true);
 assert.equal(adminTokenOk('wrong'), false);
 assert.equal(adminTokenOk(undefined), false);
 delete process.env.ADMIN_TOKEN;
+// descriptive statistics (values checked against SPSS conventions)
+const { describe, cronbachAlpha, pearson, analyse } = await import('../api/stats.js');
+const d5 = describe([1, 2, 3, 4, 5]);
+assert.equal(d5.mean, 3); assert.equal(d5.sd, 1.581); assert.equal(d5.skew, 0); assert.equal(d5.kurt, -1.2); assert.equal(d5.median, 3);
+assert.deepEqual(describe([null, 4]), { n: 1, mean: 4, sd: null, min: 4, max: 4, median: 4, skew: null, kurt: null });
+assert.equal(cronbachAlpha([[1, 1], [2, 2], [3, 3], [5, 5]]).alpha, 1);
+assert.equal(cronbachAlpha([[1, 2, null], [2, 3, 3]]).alpha, null);          // too few complete cases
+assert.equal(pearson([1, 2, 3, 4], [2, 4, 6, 8]).r, 1);
+assert.equal(pearson([1, 2, 3, 4], [8, 6, 4, 2]).r, -1);
+const an = analyse(rows.slice(1, 3));
+assert.equal(an.n, 2);
+assert.equal(an.constructs.find(c => c.code === 'HC').k, 6);
+assert.ok(!JSON.stringify(an).includes(rows[1].receipt_code), 'analysis must contain aggregates only');
+assert.ok(an.items.every(i => i.counts.length === 5));
 console.log('All admin summary tests passed.');
 
 // Pre-launch reminder (does not fail the tests)

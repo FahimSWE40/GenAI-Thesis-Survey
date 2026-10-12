@@ -13,17 +13,27 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="admin.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23467c69'/><circle cx='16' cy='16' r='6' fill='%23f6f4ee'/></svg>">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"
+    integrity="sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
   <header class="top">
     <div class="top-inner">
-      <span class="brand">GenAI Survey · Admin</span>
+      <span class="brand">GenAI Survey <span class="brand-sub">Admin</span></span>
       <div class="top-actions" id="topActions" hidden>
         <span class="updated" id="updated"></span>
         <button type="button" class="btn ghost" id="refresh">Refresh</button>
         <button type="button" class="btn ghost" id="logout">Sign out</button>
       </div>
     </div>
+    <nav class="tabs" id="tabs" role="tablist" aria-label="Dashboard sections" hidden>
+      <button role="tab" data-tab="overview">Overview</button>
+      <button role="tab" data-tab="participants">Participants</button>
+      <button role="tab" data-tab="use">GenAI use</button>
+      <button role="tab" data-tab="stats">Descriptive statistics</button>
+      <button role="tab" data-tab="submissions">Submissions</button>
+    </nav>
   </header>
 
   <main class="wrap">
@@ -39,77 +49,104 @@
     </section>
 
     <div id="dash" hidden>
-      <section class="kpis" id="kpis"></section>
-
-      <section class="card">
-        <div class="card-head"><h2>Progress to target</h2><span class="muted" id="targetText"></span></div>
-        <div class="meter" aria-hidden="true"><div class="meter-bar" id="meterBar"></div></div>
+      <!-- ============ OVERVIEW ============ -->
+      <section class="panel" data-panel="overview">
+        <div class="kpis" id="kpis"></div>
+        <div class="card">
+          <div class="card-head"><h2>Progress to target sample</h2><span class="muted" id="targetText"></span></div>
+          <div class="meter" aria-hidden="true"><div class="meter-bar" id="meterBar"></div></div>
+        </div>
+        <div class="grid2">
+          <div class="card"><div class="card-head"><h2>Submissions per day</h2><span class="muted">Bangladesh time · tests excluded</span></div><div class="chart h260"><canvas id="cDaily"></canvas></div></div>
+          <div class="card"><div class="card-head"><h2>Exclusion reasons</h2><span class="muted">first reason per case</span></div><div class="chart h260"><canvas id="cExcl"></canvas></div><p class="note" id="slNote"></p></div>
+        </div>
+        <div class="grid2">
+          <div class="card"><div class="card-head"><h2>From link visit to valid response</h2><span class="muted" id="visitsSince"></span></div><div class="chart h220"><canvas id="cFunnel"></canvas></div><p class="note">Unique visitor = one browser. Test links are excluded. Submissions made before visit counting started are included.</p></div>
+          <div class="card"><div class="card-head"><h2>Unique visitors per day</h2><span class="muted">visitors vs submissions</span></div><div class="chart h220"><canvas id="cVisits"></canvas></div></div>
+        </div>
       </section>
 
-      <section class="card">
-        <div class="card-head"><h2>Link visits</h2><span class="muted" id="visitsSince"></span></div>
-        <div class="vkpis" id="visitKpis"></div>
-        <div class="grid2 inner">
-          <div>
-            <h3>From visit to valid response</h3>
-            <div id="funnel"></div>
-          </div>
-          <div>
-            <h3>Unique visitors per day</h3>
-            <div id="visitDaily" class="daily short"></div>
-            <div class="legend"><span><i class="sw sw-visit"></i>Visitors</span><span><i class="sw sw-valid"></i>Submitted</span></div>
-          </div>
+      <!-- ============ PARTICIPANTS ============ -->
+      <section class="panel" data-panel="participants" hidden>
+        <p class="panel-note" id="partNote"></p>
+        <div class="grid3" id="pies"></div>
+        <div class="grid2" id="partBars"></div>
+        <div class="card">
+          <div class="card-head"><h2>Respondent profile table</h2><button class="btn ghost" type="button" data-csv="profile">Download CSV</button></div>
+          <div class="table-wrap"><table class="stat" id="profileTable"></table></div>
         </div>
-        <h3>By link (recruitment source)</h3>
-        <div class="table-wrap">
-          <table>
+      </section>
+
+      <!-- ============ GENAI USE ============ -->
+      <section class="panel" data-panel="use" hidden>
+        <p class="panel-note" id="useNote"></p>
+        <div class="grid2" id="useCharts"></div>
+        <div class="card">
+          <div class="card-head"><h2>GenAI use table</h2><button class="btn ghost" type="button" data-csv="use">Download CSV</button></div>
+          <div class="table-wrap"><table class="stat" id="useTable"></table></div>
+        </div>
+      </section>
+
+      <!-- ============ DESCRIPTIVE STATISTICS ============ -->
+      <section class="panel" data-panel="stats" hidden>
+        <p class="panel-note" id="statsNote"></p>
+        <div class="card">
+          <div class="card-head"><h2>Construct descriptive statistics</h2><button class="btn ghost" type="button" data-csv="constructs">Download CSV</button></div>
+          <div class="table-wrap"><table class="stat" id="constructTable"></table></div>
+          <p class="note">Construct score = mean of the answered items (HC6 reversed), as <code>CT_mean</code> … in the SPSS export. α = Cronbach's alpha on cases that answered every item. Skewness and kurtosis follow SPSS (values between −2 and +2 are usually read as acceptable for normality). SC: 1 = always an AI chatbot … 5 = always a person.</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><div class="card-head"><h2>Construct means</h2><span class="muted">mean ± SD on the 1–5 scale</span></div><div class="chart h300"><canvas id="cMeans"></canvas></div></div>
+          <div class="card"><div class="card-head"><h2>Correlations between constructs</h2><span class="muted">Pearson r</span></div><div class="table-wrap"><table class="heat" id="corrTable"></table></div><p class="note">Green = positive, red = negative; darker = stronger. Correlations are descriptive only; test hypotheses in SmartPLS.</p></div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <h2>Item responses</h2>
+            <div class="filters">
+              <select id="itemConstruct" aria-label="Construct"></select>
+              <button class="btn ghost" type="button" data-csv="items">Download CSV (all items)</button>
+            </div>
+          </div>
+          <div class="chart" id="itemChartBox"><canvas id="cItems"></canvas></div>
+          <div class="table-wrap"><table class="stat" id="itemTable"></table></div>
+        </div>
+      </section>
+
+      <!-- ============ SUBMISSIONS ============ -->
+      <section class="panel" data-panel="submissions" hidden>
+        <div class="card">
+          <div class="card-head"><h2>By link (recruitment source)</h2></div>
+          <div class="table-wrap"><table class="stat">
             <thead><tr><th>Source</th><th class="num">Visitors</th><th class="num">Started</th><th class="num">Submitted</th><th class="num">Valid</th><th class="num">Visit → submit</th></tr></thead>
             <tbody id="srcRows"></tbody>
-          </table>
+          </table></div>
         </div>
-        <p class="muted small">Unique visitor = one browser (phone or computer), counted once however often the link is opened. Researcher test links (<code>?src=test</code>) are left out.</p>
-      </section>
-
-      <div class="grid2">
-        <section class="card">
-          <div class="card-head"><h2>Submissions per day</h2><span class="muted">Bangladesh time · tests not counted</span></div>
-          <div id="daily" class="daily"></div>
-          <div class="legend"><span><i class="sw sw-valid"></i>Valid</span><span><i class="sw sw-excl"></i>Excluded</span></div>
-        </section>
-        <section class="card">
-          <div class="card-head"><h2>Why responses are excluded</h2><span class="muted">first reason only, in screening order</span></div>
-          <div id="exclusions"></div>
-        </section>
-      </div>
-
-      <div class="grid3" id="breakdowns"></div>
-
-      <section class="card">
-        <div class="card-head">
-          <h2>Submissions</h2>
-          <div class="filters">
-            <select id="fShow" aria-label="Show">
-              <option value="all">All</option>
-              <option value="valid">Valid only</option>
-              <option value="excluded">Excluded only</option>
-              <option value="test">Tests only</option>
-            </select>
-            <input id="fSearch" type="search" placeholder="Search receipt, university, source" aria-label="Search">
+        <div class="card">
+          <div class="card-head">
+            <h2>Submissions</h2>
+            <div class="filters">
+              <select id="fShow" aria-label="Show">
+                <option value="all">All</option>
+                <option value="valid">Valid only</option>
+                <option value="excluded">Excluded only</option>
+                <option value="test">Tests only</option>
+              </select>
+              <input id="fSearch" type="search" placeholder="Search receipt, university, source" aria-label="Search">
+            </div>
           </div>
+          <div class="table-wrap">
+            <table class="list">
+              <thead><tr><th>Case</th><th>Submitted</th><th>Receipt</th><th>University</th><th>Source</th><th>Device</th><th>Time</th><th>Status</th></tr></thead>
+              <tbody id="rows"></tbody>
+            </table>
+          </div>
+          <p class="note" id="rowsNote"></p>
         </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Case</th><th>Submitted</th><th>Receipt</th><th>University</th><th>Source</th><th>Device</th><th>Time</th><th>Status</th></tr></thead>
-            <tbody id="rows"></tbody>
-          </table>
+        <div class="card note-card">
+          <strong>Exports for analysis:</strong> Supabase → SQL Editor → <code>select * from export_spss;</code> (SPSS, all cases with flags) or
+          <code>select * from export_smartpls;</code> (SmartPLS, valid cases, missing = -99) → Download CSV.
+          Withdrawal: <code>insert into withdrawals (receipt_code) values ('GA-XXXX-XXXX');</code>
         </div>
-        <p class="muted small" id="rowsNote"></p>
-      </section>
-
-      <section class="card small muted">
-        <strong>Exports for analysis:</strong> Supabase → SQL Editor → <code>select * from export_spss;</code> (SPSS, all cases with flags) or
-        <code>select * from export_smartpls;</code> (SmartPLS, valid cases, missing = -99) → Download CSV.
-        Withdrawal: <code>insert into withdrawals (receipt_code) values ('GA-XXXX-XXXX');</code>
       </section>
     </div>
   </main>
