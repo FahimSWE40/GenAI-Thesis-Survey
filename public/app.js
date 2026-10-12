@@ -211,6 +211,8 @@ app.addEventListener('change', e => {
     state.answers[id] = raw;
   }
   document.getElementById('q-' + id)?.classList.remove('missing');
+  track('start');
+  if (screenedOut()) track('screened_out');
 
   const otherOpt = QMAP[id]?.options?.find(o => o.other);
   const other = document.querySelector(`[data-other="${id}"]`);
@@ -349,6 +351,22 @@ async function submit() {
   }
 }
 
+// ---------- link-visit tracking for the admin dashboard ----------
+// Anonymous: the browser ID, the event and the ?src= tag only. Sent once per event per day;
+// failures are ignored so the form never depends on it.
+function track(event) {
+  if (!respondentId) return;
+  const day = new Date(Date.now() + 6 * 3600e3).toISOString().slice(0, 10);   // Bangladesh date
+  const key = `genai-visit-${event}-${day}`;
+  try { if (localStorage.getItem(key)) return; localStorage.setItem(key, '1'); } catch { /* still send */ }
+  try {
+    fetch('/api/visit', {
+      method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ visitor_id: respondentId, event, src: state.src }),
+    }).catch(() => {});
+  } catch { /* ignore */ }
+}
+
 // ---------- recruitment source (?src=...) ----------
 try {
   const src = new URLSearchParams(location.search).get('src');
@@ -375,3 +393,4 @@ function mountBotCheck() {
 }
 
 render();
+track('view');

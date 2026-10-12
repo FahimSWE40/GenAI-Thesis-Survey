@@ -2,7 +2,8 @@
 // Requires header  x-admin-token: <ADMIN_TOKEN>  (Vercel environment variable).
 // Applies the same screening rules as the export_spss / export_smartpls views
 // (scripts/exports.mjs), so the counts here match the analysis files.
-// Never returns ip_hash, respondent_id or item answers — only summaries and a short submission list.
+// Never returns ip_hash, respondent_id/visitor_id or item answers — only summaries and a short submission list.
+// Link visits (table visits) give unique visitors per day and source and the visit → submission funnel.
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { SECTIONS, fieldList } from '../public/questions.js';
 import { MIN_SECONDS } from '../scripts/exports.mjs';
@@ -49,7 +50,7 @@ function countBy(rows, fn) {
 }
 
 // Pure function (tested in scripts/test-validate.mjs)
-export function summarize(rows, withdrawnCodes) {
+export function summarize(rows, withdrawnCodes, visits = []) {
   const withdrawn = new Set(withdrawnCodes);
   const sorted = [...rows].sort((a, b) => a.created_at.localeCompare(b.created_at) || a.id - b.id);
   const seen = new Map();
@@ -71,7 +72,7 @@ export function summarize(rows, withdrawnCodes) {
     return {
       id: r.id, created_at: r.created_at, receipt: r.receipt_code, src: r.src || '', device: r.device_type || 'unknown',
       lang: r.ui_lang || '', duration_sec: r.duration_sec, form_version: r.form_version, university: r.dem3 || '',
-      dem2: r.dem2, dem4: r.dem4, dem6: r.dem6, dem7: r.dem7, flags, straightline: straight, valid: flags.length === 0,
+      dem2: r.dem2, dem4: r.dem4, dem6: r.dem6, dem7: r.dem7, flags, straightline: straight, valid: flags.length === 0, _dev: r.respondent_id,
     };
   });
 
@@ -116,7 +117,44 @@ export function summarize(rows, withdrawnCodes) {
       device: countBy(valid, c => c.device),
       language: countBy(valid, c => ({ en: 'English', bn: 'Bangla', both: 'English + Bangla' })[c.lang] || c.lang || '(unknown)'),
     },
-    recent: cases.slice(-RECENT_LIMIT).reverse().map(({ dem2, dem4, dem6, dem7, ...c }) => c),
+    visits: visitSummary(visits, real),
+    recent: cases.slice(-RECENT_LIMIT).reverse().map(({ dem2, dem4, dem6, dem7, _dev, ...c }) => c),
+  };
+}
+
+// Unique visitors (by browser ID) and the funnel view → start → submit → valid; test traffic excluded.
+function visitSummary(visits, realCases) {
+  const v = visits.filter(x => (x.src || '') !== 'test');
+  const people = ev => new Set(v.filter(x => x.event === ev).map(x => x.visitor_id));
+  const viewers = people('view'), starters = people('start'), screened = people('screened_out');
+  const submitters = new Set(realCases.map(c => c._dev || 'case' + c.id));
+  const validSubmitters = new Set(realCases.filter(c => c.valid).map(c => c._dev || 'case' + c.id));
+  const today = dhakaDay(new Date().toISOString());
+
+  const firstSrc = new Map();   // a visitor's source = the tag on their first visit
+  for (const x of [...v].sort((a, b) => a.created_at.localeCompare(b.created_at))) if (!firstSrc.has(x.visitor_id)) firstSrc.set(x.visitor_id, x.src || '(no tag)');
+  const bySrc = new Map();
+  const row = k => bySrc.get(k) || bySrc.set(k, { key: k, visitors: 0, started: 0, submitted: 0, valid: 0 }).get(k);
+  for (const id of viewers) row(firstSrc.get(id) || '(no tag)').visitors++;
+  for (const id of starters) row(firstSrc.get(id) || '(no tag)').started++;
+  for (const c of realCases) { const r = row(c.src || '(no tag)'); r.submitted++; if (c.valid) r.valid++; }
+
+  const days = new Map();
+  const day = d => days.get(d) || days.set(d, { day: d, visitors: new Set(), submitted: 0 }).get(d);
+  for (const x of v) if (x.event === 'view') day(x.day).visitors.add(x.visitor_id);
+  for (const c of realCases) day(dhakaDay(c.created_at)).submitted++;
+
+  return {
+    since: v.length ? v.map(x => x.created_at).sort()[0] : null,
+    unique_visitors: viewers.size,
+    today_visitors: new Set(v.filter(x => x.event === 'view' && x.day === today).map(x => x.visitor_id)).size,
+    started: starters.size,
+    screened_out: screened.size,
+    submitted: submitters.size,
+    valid: validSubmitters.size,
+    by_source: [...bySrc.values()].sort((a, b) => b.visitors - a.visitors || b.submitted - a.submitted),
+    daily: [...days.values()].map(d => ({ day: d.day, visitors: d.visitors.size, submitted: d.submitted })).sort((a, b) => a.day.localeCompare(b.day)),
+    devices: countBy([...viewers].map(id => v.find(x => x.visitor_id === id && x.event === 'view')), x => x.device_type || 'unknown'),
   };
 }
 
@@ -132,11 +170,12 @@ export default async function handler(req, res) {
   }
   if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) return res.status(503).json({ error: 'Database settings missing' });
   try {
-    const [rows, wd] = await Promise.all([
+    const [rows, wd, visits] = await Promise.all([
       fetchAll(`responses?select=${SELECT}&order=id.asc`),
       fetchAll('withdrawals?select=receipt_code'),
+      fetchAll('visits?select=created_at,day,visitor_id,event,src,device_type&order=id.asc'),
     ]);
-    return res.status(200).json(summarize(rows, wd.map(w => w.receipt_code)));
+    return res.status(200).json(summarize(rows, wd.map(w => w.receipt_code), visits));
   } catch (e) {
     console.error('admin: load failed', String(e.message || e).slice(0, 80));
     return res.status(502).json({ error: 'Could not load submissions' });

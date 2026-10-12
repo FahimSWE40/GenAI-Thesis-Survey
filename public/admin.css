@@ -98,3 +98,21 @@ td.mono { font-family: ui-monospace, Consolas, monospace; font-size: 12px; white
   .updated { display: none; }
   .filters, .filters input, .filters select { width: 100%; }
 }
+
+/* link visits */
+h3 { font: 600 13px var(--sans); color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin: 18px 0 10px; }
+.grid2.inner { gap: 24px; }
+.grid2.inner h3 { margin-top: 4px; }
+.vkpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+.vkpi { border: 1px solid var(--rule); border-radius: 8px; padding: 10px 12px; min-width: 0; }
+.vkpi .v { font: 600 22px/1.1 var(--serif); font-variant-numeric: tabular-nums; }
+.vkpi .l { font-size: 12px; color: var(--muted); margin-top: 3px; }
+.daily.short { height: 130px; }
+.day .b-visit { background: #b9d3c6; border-radius: 3px 3px 0 0; }
+.day.pair { flex-direction: row; align-items: flex-end; gap: 2px; }
+.day.pair > div { flex: 1; }
+.sw-visit { background: #b9d3c6; }
+th.num, td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.funnel .bar-row .fill { background: var(--accent); }
+@media (max-width: 1000px) { .vkpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .vkpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

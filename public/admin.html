@@ -46,6 +46,30 @@
         <div class="meter" aria-hidden="true"><div class="meter-bar" id="meterBar"></div></div>
       </section>
 
+      <section class="card">
+        <div class="card-head"><h2>Link visits</h2><span class="muted" id="visitsSince"></span></div>
+        <div class="vkpis" id="visitKpis"></div>
+        <div class="grid2 inner">
+          <div>
+            <h3>From visit to valid response</h3>
+            <div id="funnel"></div>
+          </div>
+          <div>
+            <h3>Unique visitors per day</h3>
+            <div id="visitDaily" class="daily short"></div>
+            <div class="legend"><span><i class="sw sw-visit"></i>Visitors</span><span><i class="sw sw-valid"></i>Submitted</span></div>
+          </div>
+        </div>
+        <h3>By link (recruitment source)</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Source</th><th class="num">Visitors</th><th class="num">Started</th><th class="num">Submitted</th><th class="num">Valid</th><th class="num">Visit → submit</th></tr></thead>
+            <tbody id="srcRows"></tbody>
+          </table>
+        </div>
+        <p class="muted small">Unique visitor = one browser (phone or computer), counted once however often the link is opened. Researcher test links (<code>?src=test</code>) are left out.</p>
+      </section>
+
       <div class="grid2">
         <section class="card">
           <div class="card-head"><h2>Submissions per day</h2><span class="muted">Bangladesh time · tests not counted</span></div>

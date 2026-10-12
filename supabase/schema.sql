@@ -132,6 +132,24 @@ revoke all on public.withdrawals from anon, authenticated;
 revoke all on public.withdrawals from service_role;
 grant select on public.withdrawals to service_role;   -- read-only, so the admin dashboard can mark withdrawn cases; adding withdrawals stays researcher-only (SQL Editor)
 
+-- Link visits for the admin dashboard: anonymous events from the form page (no answers, no IP).
+-- visitor_id = the same random browser ID as responses.respondent_id; one row per visitor, event and day.
+create table if not exists public.visits (
+  id          bigint generated always as identity primary key,
+  created_at  timestamptz not null default now(),
+  day         date not null default ((now() at time zone 'Asia/Dhaka')::date),   -- Bangladesh date
+  visitor_id  uuid not null,
+  event       text not null check (event in ('view', 'start', 'screened_out')),
+  src         text check (src ~ '^[a-z0-9_-]{1,60}$'),
+  device_type text check (device_type in ('mobile', 'tablet', 'desktop', 'unknown')),
+  unique (visitor_id, event, day)
+);
+comment on table public.visits is 'Form link visits: view = opened the form, start = gave a first answer, screened_out = answered No to an eligibility question';
+alter table public.visits enable row level security;
+revoke all on public.visits from anon, authenticated;
+revoke all on public.visits from service_role;
+grant select, insert on public.visits to service_role;   -- /api/visit adds events; /api/admin reads them
+
 comment on column public.responses.dem1 is 'DEM1: Your age | 1=18–20 years; 2=21–23 years; 3=24–26 years; 4=27 years or above';
 comment on column public.responses.dem2 is 'DEM2: Your gender | 1=Male; 2=Female';
 comment on column public.responses.dem3 is 'DEM3: Name of your university or college | typed answer';

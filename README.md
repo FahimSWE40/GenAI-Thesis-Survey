@@ -123,7 +123,8 @@ insert into withdrawals (receipt_code, note) values ('GA-5YF4-PZMA', 'participan
 | `public/index.html`, `public/app.js`, `public/styles.css` | The form participants see |
 | `api/submit.js` | Serverless function: validation, IP hashing, device type, bot check, receipt code, insert, clear error messages |
 | `api/health.js` | Deployment status page (`/api/health`): settings present + database reachable |
-| `api/admin.js` · `public/admin.*` | Researcher dashboard (`/admin`): submission tracking, password-protected, read-only |
+| `api/admin.js` · `public/admin.*` | Researcher dashboard (`/admin`): submissions and link visits, password-protected, read-only |
+| `api/visit.js` | Records anonymous link-visit events for the dashboard |
 | `supabase/schema.sql` | Tables, append-only trigger, withdrawals table and analysis view — *generated* |
 | `supabase/upgrade_to_v2_8.sql` | Brings a database created before v2.8 up to the current rules (applied to the live project on 2026-10-12) |
 | `CODEBOOK.md` | Every column and value code — *generated* |
@@ -233,6 +234,7 @@ where src is distinct from 'test';
 - **Numbers:** valid responses, all submissions, today's count, exclusions, median completion time, last submission, progress to the target sample (N = 400).
 - **Charts:** submissions per day (valid vs excluded); why responses are excluded; breakdown of valid responses by recruitment source, institution type, university, gender, year, subject group, device and language.
 - **Submission list:** latest 200 with case number, time, receipt code, university, source, device, completion time and status (Valid / Test / Withdrawn / Failed attention check / Too fast / Repeat device / Straight-line), with filter and search.
+- **Link visits:** unique visitors (one per browser), visitors today, how many started answering, were screened out, submitted and gave a valid response; visitors per day; and a per-link table (visitors → started → submitted → valid) for each `?src=` tag. The form page sends these anonymous events to `/api/visit` (browser ID, event, source tag and device type only; one record per visitor, event and day in the `visits` table; failures never affect the form).
 - **Same rules as the exports:** a case counts as valid exactly when `Valid = 1` in `export_spss`.
 - **Safe by design:** read-only (cannot change or delete anything); hashed IPs, device IDs and item answers never leave the server; the password is sent in a header and kept only for the open tab; wrong passwords are slowed down; pages are `noindex` and never cached. Refreshes every minute.
 - **Change the password:** Vercel → Settings → Environment Variables → edit `ADMIN_TOKEN` → redeploy.

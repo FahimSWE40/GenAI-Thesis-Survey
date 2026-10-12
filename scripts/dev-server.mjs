@@ -43,6 +43,18 @@ createServer(async (req, res) => {
     };
     return admin(req, shim);
   }
+  if (url.pathname === '/api/visit') {
+    if (req.method !== 'POST') { res.writeHead(405).end(); return; }
+    let raw = '';
+    for await (const chunk of req) raw += chunk;
+    const { visitRow, insertVisit } = await import('../api/visit.js');
+    let body = null; try { body = JSON.parse(raw); } catch { /* invalid */ }
+    const row = visitRow(body, req);
+    if (!row) { res.writeHead(400).end(); return; }
+    if (useSupabase) await insertVisit(row).catch(() => {});
+    else await appendFile(join(root, 'dev-visits.jsonl'), JSON.stringify(row) + '\n');
+    res.writeHead(204).end(); return;
+  }
   if (url.pathname === '/admin') { res.writeHead(302, { Location: '/admin.html' }); res.end(); return; }
   if (url.pathname === '/api/submit') {
     if (req.method !== 'POST') { res.writeHead(405).end(); return; }

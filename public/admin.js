@@ -70,6 +70,8 @@ function render() {
   $('targetText').textContent = `${t.valid} of ${data.target} valid (${pct}%) · ${Math.max(0, data.target - t.valid)} to go`;
   $('meterBar').style.width = pct + '%';
 
+  renderVisits();
+
   // daily chart
   const days = data.daily;
   if (!days.length) $('daily').innerHTML = '<p class="empty">No submissions yet</p>';
@@ -98,6 +100,44 @@ function render() {
   ].join('');
 
   renderRows();
+}
+
+function renderVisits() {
+  const v = data.visits;
+  const pct = (a, b) => (b ? `${Math.round((a / b) * 100)}%` : '–');
+  $('visitsSince').textContent = v.since ? `counting since ${fmtTime(v.since)}` : 'no visits recorded yet';
+  const k = (val, l) => `<div class="vkpi"><div class="v">${val}</div><div class="l">${l}</div></div>`;
+  $('visitKpis').innerHTML = [
+    k(v.unique_visitors, 'Unique visitors'),
+    k(v.today_visitors, 'Visitors today'),
+    k(v.started, 'Started answering'),
+    k(v.screened_out, 'Not eligible (screened out)'),
+    k(pct(v.submitted, v.unique_visitors), 'Visitors who submitted'),
+  ].join('');
+
+  const steps = [
+    { key: 'Opened the link', n: v.unique_visitors },
+    { key: 'Started answering', n: v.started },
+    { key: 'Submitted', n: v.submitted },
+    { key: 'Valid response', n: v.valid },
+  ];
+  $('funnel').innerHTML = `<div class="funnel">${bars(steps, v.unique_visitors)}</div>` +
+    `<p class="muted small">Submissions made before visit counting started are included in Submitted, so early percentages can exceed 100%.</p>`;
+
+  const days = v.daily;
+  if (!days.length) $('visitDaily').innerHTML = '<p class="empty">No visits yet</p>';
+  else {
+    const max = Math.max(1, ...days.map(d => Math.max(d.visitors, d.submitted)));
+    $('visitDaily').innerHTML = days.map(d => `<div class="day pair" title="${d.day}: ${d.visitors} visitors, ${d.submitted} submitted">
+      <span class="n">${d.visitors}</span>
+      <div class="b-visit" style="height:${(d.visitors / max) * 100}%"></div>
+      <div class="b-valid" style="height:${(d.submitted / max) * 100}%"></div></div>`).join('');
+  }
+
+  $('srcRows').innerHTML = v.by_source.length ? v.by_source.map(r => `<tr>
+    <td>${esc(r.key)}</td><td class="num">${r.visitors}</td><td class="num">${r.started}</td>
+    <td class="num">${r.submitted}</td><td class="num">${r.valid}</td><td class="num">${pct(r.submitted, r.visitors)}</td></tr>`).join('')
+    : '<tr><td colspan="6" class="empty">No visits yet</td></tr>';
 }
 
 function renderRows() {

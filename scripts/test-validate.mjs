@@ -131,6 +131,20 @@ assert.equal(sum.recent.find(c => c.id === 2).valid, true);
 assert.deepEqual(sum.breakdowns.source, [{ key: 'diu', n: 1 }]);
 assert.ok(sum.recent.find(c => c.id === 2).straightline.length >= 1 && !sum.recent.find(c => c.id === 2).straightline.includes('CT'));
 assert.ok(!('ip_hash' in sum.recent[0]) && !('respondent_id' in sum.recent[0]), 'admin list must not expose device identifiers');
+// link visits: unique visitors and funnel, tests excluded, no browser IDs returned
+const V = (visitor_id, event, src = null, day = '2026-10-12') => ({ visitor_id, event, src, day, device_type: 'mobile', created_at: day + 'T05:00:00Z' });
+const vis = summarize(rows, [], [V(dev, 'view', 'diu'), V(dev, 'view', 'diu', '2026-10-13'), V(dev, 'start', 'diu'), V('v2', 'view'), V('v2', 'screened_out'), V('t1', 'view', 'test')]).visits;
+assert.equal(vis.unique_visitors, 2);             // dev counted once across two days; test visitor left out
+assert.equal(vis.started, 1);
+assert.equal(vis.screened_out, 1);
+assert.deepEqual(vis.by_source.find(r => r.key === 'diu'), { key: 'diu', visitors: 1, started: 1, submitted: 1, valid: 1 });
+assert.ok(!JSON.stringify(vis).includes(dev), 'visit summary must not expose browser IDs');
+const { visitRow } = await import('../api/visit.js');
+const fakeReq = { headers: { 'user-agent': 'Mozilla/5.0 (iPhone)' } };
+assert.equal(visitRow({ visitor_id: dev, event: 'view', src: 'DIU CSE!' }, fakeReq).src, 'diucse');
+assert.equal(visitRow({ visitor_id: dev, event: 'view' }, fakeReq).device_type, 'mobile');
+assert.equal(visitRow({ visitor_id: 'nope', event: 'view' }, fakeReq), null);
+assert.equal(visitRow({ visitor_id: dev, event: 'hack' }, fakeReq), null);
 process.env.ADMIN_TOKEN = 'correct-horse-battery';
 assert.equal(adminTokenOk('correct-horse-battery'), true);
 assert.equal(adminTokenOk('wrong'), false);
