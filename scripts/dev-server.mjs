@@ -35,6 +35,15 @@ createServer(async (req, res) => {
     };
     return health(req, shim);
   }
+  if (url.pathname === '/api/admin') {
+    const { default: admin } = await import('../api/admin.js');
+    const shim = {
+      setHeader: (k, v) => res.setHeader(k, v),
+      status: code => ({ json: obj => { res.writeHead(code, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(obj)); } }),
+    };
+    return admin(req, shim);
+  }
+  if (url.pathname === '/admin') { res.writeHead(302, { Location: '/admin.html' }); res.end(); return; }
   if (url.pathname === '/api/submit') {
     if (req.method !== 'POST') { res.writeHead(405).end(); return; }
     let raw = '';

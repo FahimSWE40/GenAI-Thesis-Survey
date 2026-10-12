@@ -105,6 +105,39 @@ assert.equal(validate(body(a)).ok, false);
 
 console.log('All validator tests passed.');
 
+// Admin dashboard: same screening rules as export_spss (Valid = not test, not withdrawn,
+// attention passed, >= 300 s, first submission per device among real submissions)
+const { summarize, adminTokenOk } = await import('../api/admin.js');
+const dev = randomUUID();
+const mk = (id, extra = {}) => {
+  const a = fullAnswers(); a.CT1 = 4;   // break straight-lining in section D only
+  const row = validate(body(a)).row;
+  return { ...row, id, created_at: new Date(Date.UTC(2026, 9, 12, 4, id)).toISOString(), duration_sec: 600, respondent_id: randomUUID(), device_type: 'mobile', ...extra };
+};
+const rows = [
+  mk(1, { src: 'test', respondent_id: dev }),          // test
+  mk(2, { respondent_id: dev, src: 'diu' }),            // valid (first real submission from this device)
+  mk(3, { respondent_id: dev }),                        // repeat device
+  mk(4, { duration_sec: 120 }),                         // too fast
+  mk(5, { attention_pass: false }),                     // failed attention check
+  mk(6, {}),                                            // withdrawn
+];
+const sum = summarize(rows, [rows[5].receipt_code]);
+assert.equal(sum.totals.all, 6);
+assert.equal(sum.totals.tests, 1);
+assert.equal(sum.totals.valid, 1);
+assert.deepEqual(sum.exclusions, { test: 1, withdrawn: 1, attention: 1, too_fast: 1, repeat_device: 1 });
+assert.equal(sum.recent.find(c => c.id === 2).valid, true);
+assert.deepEqual(sum.breakdowns.source, [{ key: 'diu', n: 1 }]);
+assert.ok(sum.recent.find(c => c.id === 2).straightline.length >= 1 && !sum.recent.find(c => c.id === 2).straightline.includes('CT'));
+assert.ok(!('ip_hash' in sum.recent[0]) && !('respondent_id' in sum.recent[0]), 'admin list must not expose device identifiers');
+process.env.ADMIN_TOKEN = 'correct-horse-battery';
+assert.equal(adminTokenOk('correct-horse-battery'), true);
+assert.equal(adminTokenOk('wrong'), false);
+assert.equal(adminTokenOk(undefined), false);
+delete process.env.ADMIN_TOKEN;
+console.log('All admin summary tests passed.');
+
 // Pre-launch reminder (does not fail the tests)
 const { STUDY_INFO } = await import('../public/questions.js');
 const missingInfo = ['contactEmail', 'ethicsRef'].filter(k => !STUDY_INFO[k]);

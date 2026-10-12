@@ -106,7 +106,8 @@ create table if not exists public.withdrawals (
 );
 alter table public.withdrawals enable row level security;
 revoke all on public.withdrawals from anon, authenticated;
-revoke all on public.withdrawals from service_role;   -- researcher-only (SQL Editor); the server never needs it
+revoke all on public.withdrawals from service_role;
+grant select on public.withdrawals to service_role;   -- read-only, so the admin dashboard can mark withdrawn cases; adding withdrawals stays researcher-only (SQL Editor)
 
 ${comments.join('\n')}
 

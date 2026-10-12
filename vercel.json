@@ -1,6 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "outputDirectory": "public",
+  "rewrites": [
+    { "source": "/admin", "destination": "/admin.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -8,6 +11,13 @@
         { "key": "X-Content-Type-Options", "value": "nosniff" },
         { "key": "Referrer-Policy", "value": "no-referrer" },
         { "key": "X-Frame-Options", "value": "DENY" }
+      ]
+    },
+    {
+      "source": "/(admin|admin\\.html|admin\\.js|admin\\.css|api/admin)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
+        { "key": "Cache-Control", "value": "no-store" }
       ]
     }
   ]

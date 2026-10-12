@@ -123,6 +123,7 @@ insert into withdrawals (receipt_code, note) values ('GA-5YF4-PZMA', 'participan
 | `public/index.html`, `public/app.js`, `public/styles.css` | The form participants see |
 | `api/submit.js` | Serverless function: validation, IP hashing, device type, bot check, receipt code, insert, clear error messages |
 | `api/health.js` | Deployment status page (`/api/health`): settings present + database reachable |
+| `api/admin.js` · `public/admin.*` | Researcher dashboard (`/admin`): submission tracking, password-protected, read-only |
 | `supabase/schema.sql` | Tables, append-only trigger, withdrawals table and analysis view — *generated* |
 | `supabase/upgrade_to_v2_8.sql` | Brings a database created before v2.8 up to the current rules (applied to the live project on 2026-10-12) |
 | `CODEBOOK.md` | Every column and value code — *generated* |
@@ -222,6 +223,19 @@ select count(*)                                  as responses,
 from responses
 where src is distinct from 'test';
 ```
+
+---
+
+## Admin dashboard
+
+**https://gen-ai-survey.vercel.app/admin** shows the researcher how data collection is going. Sign in with the admin password (`ADMIN_TOKEN`, a *sensitive* Vercel environment variable; the researcher's copy is in the git-ignored `.env.local`).
+
+- **Numbers:** valid responses, all submissions, today's count, exclusions, median completion time, last submission, progress to the target sample (N = 400).
+- **Charts:** submissions per day (valid vs excluded); why responses are excluded; breakdown of valid responses by recruitment source, institution type, university, gender, year, subject group, device and language.
+- **Submission list:** latest 200 with case number, time, receipt code, university, source, device, completion time and status (Valid / Test / Withdrawn / Failed attention check / Too fast / Repeat device / Straight-line), with filter and search.
+- **Same rules as the exports:** a case counts as valid exactly when `Valid = 1` in `export_spss`.
+- **Safe by design:** read-only (cannot change or delete anything); hashed IPs, device IDs and item answers never leave the server; the password is sent in a header and kept only for the open tab; wrong passwords are slowed down; pages are `noindex` and never cached. Refreshes every minute.
+- **Change the password:** Vercel → Settings → Environment Variables → edit `ADMIN_TOKEN` → redeploy.
 
 ---
 

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Survey Admin</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#fdfcfa">
+  <meta name="color-scheme" content="light">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23467c69'/><circle cx='16' cy='16' r='6' fill='%23f6f4ee'/></svg>">
+</head>
+<body>
+  <header class="top">
+    <div class="top-inner">
+      <span class="brand">GenAI Survey · Admin</span>
+      <div class="top-actions" id="topActions" hidden>
+        <span class="updated" id="updated"></span>
+        <button type="button" class="btn ghost" id="refresh">Refresh</button>
+        <button type="button" class="btn ghost" id="logout">Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="login" class="login card">
+      <h1>Submission tracker</h1>
+      <p class="muted">For the researcher only. Enter the admin password (the <code>ADMIN_TOKEN</code> set in Vercel).</p>
+      <form id="loginForm" autocomplete="off">
+        <label for="pw">Admin password</label>
+        <input id="pw" type="password" autocomplete="current-password" required>
+        <button class="btn" type="submit">Open dashboard</button>
+        <p class="err" id="loginErr" role="alert"></p>
+      </form>
+    </section>
+
+    <div id="dash" hidden>
+      <section class="kpis" id="kpis"></section>
+
+      <section class="card">
+        <div class="card-head"><h2>Progress to target</h2><span class="muted" id="targetText"></span></div>
+        <div class="meter" aria-hidden="true"><div class="meter-bar" id="meterBar"></div></div>
+      </section>
+
+      <div class="grid2">
+        <section class="card">
+          <div class="card-head"><h2>Submissions per day</h2><span class="muted">Bangladesh time · tests not counted</span></div>
+          <div id="daily" class="daily"></div>
+          <div class="legend"><span><i class="sw sw-valid"></i>Valid</span><span><i class="sw sw-excl"></i>Excluded</span></div>
+        </section>
+        <section class="card">
+          <div class="card-head"><h2>Why responses are excluded</h2><span class="muted">first reason only, in screening order</span></div>
+          <div id="exclusions"></div>
+        </section>
+      </div>
+
+      <div class="grid3" id="breakdowns"></div>
+
+      <section class="card">
+        <div class="card-head">
+          <h2>Submissions</h2>
+          <div class="filters">
+            <select id="fShow" aria-label="Show">
+              <option value="all">All</option>
+              <option value="valid">Valid only</option>
+              <option value="excluded">Excluded only</option>
+              <option value="test">Tests only</option>
+            </select>
+            <input id="fSearch" type="search" placeholder="Search receipt, university, source" aria-label="Search">
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Case</th><th>Submitted</th><th>Receipt</th><th>University</th><th>Source</th><th>Device</th><th>Time</th><th>Status</th></tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+        <p class="muted small" id="rowsNote"></p>
+      </section>
+
+      <section class="card small muted">
+        <strong>Exports for analysis:</strong> Supabase → SQL Editor → <code>select * from export_spss;</code> (SPSS, all cases with flags) or
+        <code>select * from export_smartpls;</code> (SmartPLS, valid cases, missing = -99) → Download CSV.
+        Withdrawal: <code>insert into withdrawals (receipt_code) values ('GA-XXXX-XXXX');</code>
+      </section>
+    </div>
+  </main>
+  <script type="module" src="admin.js"></script>
+</body>
+</html>
